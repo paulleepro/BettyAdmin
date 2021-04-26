@@ -11,10 +11,5 @@ export function postLogin({ username, password }) {
 }
 
 export function req(url, config) {
-  return fetch(url, {
-    ...config,
-    
-  });
+  return fetch(url, { ...config });
 }
-
-export function listUpcoming() {}

@@ -5,7 +5,7 @@ import styled, { StyledComponent } from "styled-components";
 
 import { Input, InputContainer, InputLabel } from "./Input";
 
-const OptionMenu = styled.div`
+export const OptionMenu = styled.div`
   background: #fff;
   border-radius: 0.25rem;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.2);
@@ -26,30 +26,26 @@ const Option = styled.div`
   }
 `;
 
-type AutocompleteProps = {
+type AutocompleteOption = {
+  value: string;
+};
+
+type AutocompleteProps<T = any> = {
   id: string;
-  label: string;
-  options: any[];
-  loadOptions: (value: string) => Promise<void>;
+  label?: string;
+  options: T[];
+  renderOption: (option: T) => Promise<T[]>;
+  getOptionValue: (option: T) => any;
   onChange: (value: string) => void;
 };
 
 export const Autocomplete = (props: AutocompleteProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState(props.options || []);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const selectRef = useRef(null);
   const containerRef = useRef<any>(null);
   const [value, setValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [debouncedValue, setDebouncedValue] = useState("");
-  const [, cancel] = useDebounce(
-    () => {
-      setDebouncedValue(value);
-    },
-    200,
-    [value]
-  );
+
   const focusSelect = () => {
     selectRef.current?.focus();
   };
@@ -60,14 +56,14 @@ export const Autocomplete = (props: AutocompleteProps) => {
     }
 
     if (e.key === "Enter") {
-      handleSelect(options[selectedIndex].value);
+      handleSelect(props.getOptionValue(props.options[selectedIndex]));
     }
 
     if (value) {
       if (e.key === "ArrowDown") {
         if (!isOpen) {
           setIsOpen(true);
-        } else if (selectedIndex < options.length - 1) {
+        } else if (selectedIndex < props.options.length - 1) {
           setSelectedIndex(selectedIndex + 1);
         }
       } else if (e.key === "ArrowUp") {
@@ -92,28 +88,17 @@ export const Autocomplete = (props: AutocompleteProps) => {
   };
 
   useEffect(() => {
-    if (props.loadOptions) {
-      setIsLoading(true);
-      props.loadOptions(debouncedValue).then((o) => {
-        setTimeout(() => {
-          setIsLoading(false);
-          setOptions(o);
-        }, 100);
-      });
-    }
-  }, [debouncedValue]);
-
-  useEffect(() => {
     if (!isOpen) {
-      cancel();
       setSelectedIndex(-1);
     }
   }, [isOpen]);
 
   useClickAway(containerRef, () => setIsOpen(false));
 
+  console.log(selectedIndex);
+
   return (
-    <InputContainer ref={containerRef} onKeyDown={handleKeyDown}>
+    <InputContainer {...{ onKeyDown: handleKeyDown, ref: containerRef }}>
       {props.label && (
         <InputLabel htmlFor={props.id} onClick={() => focusSelect()}>
           {props.label}
@@ -124,15 +109,17 @@ export const Autocomplete = (props: AutocompleteProps) => {
         onFocus={() => setIsOpen(true)}
         value={value}
       />
-      {isOpen && options.length > 0 && value.length > 0 && (
+      {isOpen && props.options.length > 0 && value.length > 0 && (
         <OptionMenu>
-          {options.map((option, i) => (
+          {props.options.map((option, i) => (
             <Option
               key={i}
-              onClick={() => handleSelect(options[i].value)}
+              onClick={() =>
+                handleSelect(props.getOptionValue(props.options[i]))
+              }
               className={`${i === selectedIndex ? "selected" : ""}`}
             >
-              {option.value}
+              {props.renderOption(option)}
             </Option>
           ))}
         </OptionMenu>

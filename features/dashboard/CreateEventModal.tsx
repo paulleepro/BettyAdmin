@@ -16,6 +16,8 @@ import { CustomRecurrenceModal } from "./CustomRecurrenceModal";
 import { TextareaAutosize } from "../../components/TextareaAutosize";
 import { KeyboardDatePicker } from "../../components/KeyboardDatePicker";
 import { AutocompleteList } from "../../components/AutocompleteList";
+import { client } from "../../graphql/client";
+import { SearchUsers } from "../../graphql/queries";
 
 type CreateEventModalProps = ModalProps & {
   event: any;
@@ -25,6 +27,19 @@ export function CreateEventModal(props: CreateEventModalProps) {
   const title = props.event ? "Edit Event" : "Create Event";
   const [isEditingRecurrence, setIsEditingRecurrence] = useState(false);
 
+  const handleLoadOptions = (q) =>
+    client
+      .query({ query: SearchUsers, variables: { query: q } })
+      .then((d) => {
+        return d.data.users.results;
+      })
+      .catch((e) => {
+        console.log(e);
+        return [];
+      });
+
+  const handleRenderOption = (option) => <div>{option.username}</div>;
+
   return (
     <Modal {...props}>
       <Preview />
@@ -33,7 +48,12 @@ export function CreateEventModal(props: CreateEventModalProps) {
         <ModalBody>
           <Input id="title" label="Room Title" margin="0 0 1.5rem 0" />
           <Input id="subtitle" label="Show Title" margin="0 0 1.5rem 0" />
-          <AutocompleteList label="Hosts" />
+          <AutocompleteList
+            label="Hosts"
+            renderOption={handleRenderOption}
+            loadOptions={handleLoadOptions}
+            getOptionValue={(option) => option.id}
+          />
           <InputContainer marginBottom="1.5rem">
             <InputLabel htmlFor="description">Description</InputLabel>
             <TextareaAutosize id="description" rowsMin={5} />
