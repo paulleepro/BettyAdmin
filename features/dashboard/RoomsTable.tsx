@@ -1,0 +1,145 @@
+import { useQuery } from "@apollo/client";
+import { differenceInDays } from "date-fns";
+import { format, utcToZonedTime } from "date-fns-tz";
+
+import styled from "styled-components";
+import { GetUpcomingRooms } from "../../graphql/queries";
+
+const LA_TZ = "America/Los_Angeles";
+
+const RoomsTableContainer = styled.div`
+  flex: 1;
+  margin-top: 1rem;
+  overflow: auto;
+
+  table {
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    position: relative;
+    width: 100%;
+
+    thead {
+      tr {
+        position: sticky;
+        top: 0;
+      }
+    }
+
+    tr {
+      position: relative;
+      z-index: 0;
+
+      th {
+        position: sticky;
+        top: 0; /* Don't forget this, required for the stickiness */
+        box-shadow: 0 2px 2px -1px #e5e5e5;
+
+        background: #fff;
+        z-index: 1;
+
+        color: #858585;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        padding: 0.5rem;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      td {
+        padding: 0.5rem;
+
+        p {
+          margin: 0;
+          padding: 0;
+
+          &.date {
+            color: #bfbfbf;
+          }
+        }
+      }
+
+      &:hover {
+        background: #f5f5f5;
+      }
+    }
+  }
+`;
+
+const StyledLink = styled.a`
+  color: #0b7ce5;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export function RoomsTable() {
+  const { loading, error, data } = useQuery(GetUpcomingRooms);
+  const laNow = utcToZonedTime(new Date(), LA_TZ);
+
+  if (loading || error) {
+    return null;
+  }
+
+  const { upcomingRooms } = data;
+
+  console.log(upcomingRooms);
+
+  return (
+    <RoomsTableContainer>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time (PST)</th>
+            <th>Title</th>
+            <th>Show</th>
+            <th>Hosts</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {upcomingRooms.map((row, rowIdx) => {
+            const date = new Date(row.startTime);
+            const laDate = utcToZonedTime(date, LA_TZ);
+            const days = differenceInDays(laDate, laNow);
+            const relativeDay = days <= 2 ? "asdf" : format(laDate, "eee");
+            return (
+              <tr key={rowIdx}>
+                <td>
+                  <p className="relative-day">{relativeDay}</p>
+                  <p className="date">
+                    {format(laDate, "MM/dd", { timeZone: LA_TZ })}
+                  </p>
+                </td>
+                <td>{format(laDate, "HH:mm a", { timeZone: LA_TZ })}</td>
+                <td>{row.title}</td>
+                <td>{row.subtitle}</td>
+                <td>
+                  {row.speakers.map((s, i, a) => (
+                    <>
+                      <StyledLink href="" key={s.id}>
+                        {s.firstName} {s.lastName}
+                      </StyledLink>
+                      {i < a.length - 1 && ","}
+                    </>
+                  ))}
+                </td>
+                <td
+                  style={{
+                    maxWidth: "12rem",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {row.description}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </RoomsTableContainer>
+  );
+}
