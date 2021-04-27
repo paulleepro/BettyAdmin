@@ -1,15 +1,49 @@
+import merge from "lodash/merge";
 import store from "../store";
 
-export function postLogin({ username, password }) {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + "/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
+export function req(url, config) {
+  const token = store.getState().auth.user?.token;
+  return fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${url}`,
+    merge(
+      {
+        headers: token && {
+          Authorization: `bearer ${token}`,
+        },
+      },
+      config
+    )
+  );
 }
 
-export function req(url, config) {
-  return fetch(url, { ...config });
+export function post(url, data, config = {}) {
+  return req(
+    url,
+    merge(
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+      config
+    )
+  );
+}
+
+export function postLogin({ username, password }) {
+  return post("/auth/login", { username, password });
+}
+
+type CreateEventPayload = {
+  title: string;
+  subtitle: string;
+  description: string;
+  startAt: number;
+  speakerIds: string[];
+};
+
+export function createUpcomingRoom(event: CreateEventPayload) {
+  return post("/upcoming", event);
 }

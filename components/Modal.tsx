@@ -114,7 +114,7 @@ export const Modal: FC<ModalProps> = (props) => {
   const Wrapper = useCallback(
     ({ children }) =>
       createElement(
-        props.component || "fragment",
+        props.component || "div",
         props.componentProps,
         children
       ),

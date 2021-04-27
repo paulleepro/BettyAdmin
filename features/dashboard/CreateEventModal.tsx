@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, Divider, MenuItem } from "@material-ui/core";
 import { useForm } from "react-hook-form";
+import { format, toDate, utcToZonedTime, getTimezoneOffset } from "date-fns-tz";
 
 import { Button } from "../../components/Button";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
@@ -23,17 +24,29 @@ import { UserOptionPreview } from "./UserOptionPreview";
 import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
 import { UserOption } from "./UserOption";
+import { KeyboardTimePicker } from "../../components/KeyboardTimePicker";
+import { createUpcomingRoom } from "../../lib/api";
 
 type CreateEventModalProps = ModalProps & {
   event?: any;
 };
 
 export function CreateEventModal(props: CreateEventModalProps) {
-  const { handleSubmit, register, setValue, trigger, watch } = useForm();
+  const { handleSubmit, register, setValue, trigger, watch } = useForm({
+    defaultValues: {
+      title: "",
+      subtitle: "",
+      description: "",
+      startTime: null,
+      startDate: null,
+      timezone: "America/Los_Angeles",
+      speakerIds: [],
+    },
+  });
   const title = props.event ? "Edit Event" : "Create Event";
   const [isEditingRecurrence, setIsEditingRecurrence] = useState(false);
   const values = watch();
-  const isDisabled = validate(values);
+  const isDisabled = !validate(values);
   const handleLoadOptions = (q) =>
     client
       .query({ query: SearchUsers, variables: { query: q } })
@@ -49,7 +62,26 @@ export function CreateEventModal(props: CreateEventModalProps) {
   const renderHostInput = (user) => {
     return <UserOptionPreview user={user} />;
   };
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    const startDate = new Date(data.startDate);
+    const startTime = new Date(data.startTime);
+    startDate.setHours(startTime.getHours());
+    startDate.setMinutes(startTime.getMinutes());
+    startDate.setSeconds(0);
+    startDate.setMilliseconds(0);
+    const startAt =
+      startTime.getTime() + getTimezoneOffset(data.timezone, startDate);
+    createUpcomingRoom({
+      title: data.title,
+      subtitle: data.subtitle,
+      description: data.description,
+      speakerIds: data.speakerIds,
+      startAt,
+    })
+      .then((r) => r.json())
+      .then(console.log)
+      .catch(console.error);
+  };
 
   return (
     <Modal
@@ -75,7 +107,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
             renderOption={handleRenderOption}
             loadOptions={handleLoadOptions}
             getOptionValue={(option) => option?.id || null}
-            onChange={(hosts) => setValue("hosts", hosts)}
+            onChange={(hosts) => setValue("speakerIds", hosts)}
           />
           <InputContainer marginBottom="1.5rem">
             <InputLabel htmlFor="description">Description</InputLabel>
@@ -89,30 +121,32 @@ export function CreateEventModal(props: CreateEventModalProps) {
             <InputLabel>Date</InputLabel>
             <KeyboardDatePicker
               format="MM/dd/yyyy"
-              value={Date.now()}
-              onChange={console.log}
+              minDate={Date.now()}
+              value={values.startDate || null}
+              onChange={(d) => setValue("startDate", d?.getTime())}
             />
           </InputContainer>
           <InputContainer marginBottom="1.5rem">
             <InputLabel>Time</InputLabel>
             <Box display="flex" alignItems="center" justifyContent="flex-start">
-              <KeyboardDatePicker
-                format="MM/dd/yyyy"
-                value={Date.now()}
-                onChange={console.log}
-              />
+              <Box maxWidth="8rem">
+                <KeyboardTimePicker
+                  value={values.startTime || null}
+                  onChange={(d) => setValue("startTime", d?.getTime())}
+                />
+              </Box>
               <Box marginLeft="1rem">
-                <Select defaultValue="PST" {...register("time")}>
-                  <MenuItem value="EST">EST</MenuItem>
-                  <MenuItem value="CST">CST</MenuItem>
-                  <MenuItem value="PST">PST</MenuItem>
+                <Select value={values.timezone} {...register("timezone")}>
+                  <MenuItem value="America/New_York">EST</MenuItem>
+                  <MenuItem value="America/Chicago">CST</MenuItem>
+                  <MenuItem value="America/Los_Angeles">PST</MenuItem>
                 </Select>
               </Box>
             </Box>
           </InputContainer>
           <InputContainer maxWidth="11.5rem">
             <InputLabel>Repeat</InputLabel>
-            <Select defaultValue="never" {...register("repeat")}>
+            <Select defaultValue="never">
               <MenuItem value="never">Never</MenuItem>
               <MenuItem value="every_day">Every Day</MenuItem>
               <MenuItem value="every_week">Every Week</MenuItem>
@@ -186,5 +220,10 @@ function Preview(props: any) {
 }
 
 function validate(values) {
-  return false;
+  if (!values.title || !values.description || !values.startDate) return false;
+  if (!values.speakerIds?.length || !values.speakerIds.every(Boolean)) {
+    return false;
+  }
+
+  return true;
 }
