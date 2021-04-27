@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MainLayout } from "../layouts/MainLayout";
 
 import { Input } from "../components/Input";
@@ -9,7 +10,6 @@ import { SearchBar } from "../features/dashboard/SearchBar";
 import { Title } from "../features/dashboard/Title";
 import { TitleBar } from "../features/dashboard/TitleBar";
 import { CreateEventModal } from "../features/dashboard/CreateEventModal";
-import { useState } from "react";
 
 export default function Home() {
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
