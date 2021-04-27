@@ -69,8 +69,9 @@ export function CreateEventModal(props: CreateEventModalProps) {
     startDate.setMinutes(startTime.getMinutes());
     startDate.setSeconds(0);
     startDate.setMilliseconds(0);
-    const startAt =
-      startTime.getTime() + getTimezoneOffset(data.timezone, startDate);
+    const startAt = new Date(
+      startTime.getTime() + getTimezoneOffset(data.timezone, startDate)
+    ).toISOString();
     createUpcomingRoom({
       title: data.title,
       subtitle: data.subtitle,

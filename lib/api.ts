@@ -16,6 +16,10 @@ export function req(url, config) {
   );
 }
 
+export function get(url, config = {}) {
+  return req(url, config);
+}
+
 export function post(url, data, config = {}) {
   return req(
     url,
@@ -36,14 +40,17 @@ export function postLogin({ username, password }) {
   return post("/auth/login", { username, password });
 }
 
-type CreateEventPayload = {
+type CreateRoomPayload = {
   title: string;
   subtitle: string;
   description: string;
-  startAt: number;
+  startAt: string;
   speakerIds: string[];
 };
 
-export function createUpcomingRoom(event: CreateEventPayload) {
-  return post("/upcoming", event);
+export function getUpcomingRooms() {
+  return get("/upcoming");
+}
+export function createUpcomingRoom(room: CreateRoomPayload) {
+  return post("/upcoming", { room });
 }
