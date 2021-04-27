@@ -5,6 +5,8 @@ import { Autocomplete } from "./Autocomplete";
 import { Input, InputLabel } from "./Input";
 
 const StyledAutocompleteList = styled(Box)`
+  margin-bottom: 1.5rem;
+
   > * {
     margin-bottom: 0.5rem;
   }
@@ -42,6 +44,7 @@ export function AutocompleteList(props) {
         id={`${props.id}[${values.length}]`}
         onChange={handleSearch}
         options={autocompleteOptions}
+        renderInput={props.renderInput}
         renderOption={props.renderOption}
         getOptionValue={props.getOptionValue}
       />

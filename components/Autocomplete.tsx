@@ -1,5 +1,5 @@
-import { BoxProps } from "@material-ui/core";
-import { ComponentType, useEffect, useRef, useState } from "react";
+import { Box, BoxProps } from "@material-ui/core";
+import { ComponentType, ReactNode, useEffect, useRef, useState } from "react";
 import { useClickAway, useDebounce } from "react-use";
 import styled, { StyledComponent } from "styled-components";
 
@@ -26,14 +26,11 @@ const Option = styled.div`
   }
 `;
 
-type AutocompleteOption = {
-  value: string;
-};
-
 type AutocompleteProps<T = any> = {
   id: string;
   label?: string;
   options: T[];
+  renderInput?: (option: T) => ReactNode;
   renderOption: (option: T) => Promise<T[]>;
   getOptionValue: (option: T) => any;
   onChange: (value: string) => void;
@@ -41,13 +38,14 @@ type AutocompleteProps<T = any> = {
 
 export const Autocomplete = (props: AutocompleteProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const selectRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<any>(null);
   const [value, setValue] = useState("");
+  const [selectedOption, setSelectedOption] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const focusSelect = () => {
-    selectRef.current?.focus();
+  const focusInput = () => {
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e) => {
@@ -56,7 +54,7 @@ export const Autocomplete = (props: AutocompleteProps) => {
     }
 
     if (e.key === "Enter") {
-      handleSelect(props.getOptionValue(props.options[selectedIndex]));
+      handleSelect(props.options[selectedIndex]);
     }
 
     if (value) {
@@ -82,41 +80,47 @@ export const Autocomplete = (props: AutocompleteProps) => {
     }
   };
 
-  const handleSelect = (val) => {
-    handleChange({ target: { value: val } });
+  const handleSelect = (option) => {
+    // handleChange({ target: { value: props.getOptionValue(option) } });
+    setSelectedOption(option);
     setIsOpen(false);
   };
 
   useEffect(() => {
     if (!isOpen) {
       setSelectedIndex(-1);
+    } else {
+      focusInput();
     }
   }, [isOpen]);
 
   useClickAway(containerRef, () => setIsOpen(false));
 
-  console.log(selectedIndex);
-
   return (
     <InputContainer {...{ onKeyDown: handleKeyDown, ref: containerRef }}>
       {props.label && (
-        <InputLabel htmlFor={props.id} onClick={() => focusSelect()}>
+        <InputLabel htmlFor={props.id} onClick={() => focusInput()}>
           {props.label}
         </InputLabel>
       )}
-      <Input
-        onChange={handleChange}
-        onFocus={() => setIsOpen(true)}
-        value={value}
-      />
+      {!isOpen && props.renderInput && selectedOption ? (
+        <Box onClick={() => setIsOpen(true)}>
+          {props.renderInput(selectedOption)}
+        </Box>
+      ) : (
+        <Input
+          onChange={handleChange}
+          onFocus={() => setIsOpen(true)}
+          ref={inputRef}
+          value={value}
+        />
+      )}
       {isOpen && props.options.length > 0 && value.length > 0 && (
         <OptionMenu>
           {props.options.map((option, i) => (
             <Option
               key={i}
-              onClick={() =>
-                handleSelect(props.getOptionValue(props.options[i]))
-              }
+              onClick={() => handleSelect(option)}
               className={`${i === selectedIndex ? "selected" : ""}`}
             >
               {props.renderOption(option)}

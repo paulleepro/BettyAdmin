@@ -18,6 +18,7 @@ import { KeyboardDatePicker } from "../../components/KeyboardDatePicker";
 import { AutocompleteList } from "../../components/AutocompleteList";
 import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
+import { HostOptionPreview } from "./HostOptionPreview";
 
 type CreateEventModalProps = ModalProps & {
   event: any;
@@ -39,6 +40,9 @@ export function CreateEventModal(props: CreateEventModalProps) {
       });
 
   const handleRenderOption = (option) => <div>{option.username}</div>;
+  const renderHostInput = (user) => {
+    return <HostOptionPreview user={user} />;
+  };
 
   return (
     <Modal {...props}>
@@ -50,6 +54,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
           <Input id="subtitle" label="Show Title" margin="0 0 1.5rem 0" />
           <AutocompleteList
             label="Hosts"
+            renderInput={renderHostInput}
             renderOption={handleRenderOption}
             loadOptions={handleLoadOptions}
             getOptionValue={(option) => option.id}
