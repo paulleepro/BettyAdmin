@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Select as MUISelect, SelectProps } from "@material-ui/core";
+import { FC, forwardRef } from "react";
 
 const StyledSelect = styled(MUISelect)`
   //   border-radius: 0.25rem;
@@ -23,6 +24,8 @@ const StyledSelect = styled(MUISelect)`
   }
 `;
 
-export const Select = (props: SelectProps) => {
-  return <StyledSelect {...props} variant="outlined" />;
-};
+export const Select: FC<SelectProps> = forwardRef<HTMLSelectElement>(
+  (props, ref) => {
+    return <StyledSelect {...props} ref={ref} variant="outlined" />;
+  }
+);

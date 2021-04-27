@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import { Box } from "@material-ui/core";
 import { differenceInDays } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 
@@ -84,8 +85,6 @@ export function RoomsTable() {
 
   const { upcomingRooms } = data;
 
-  console.log(upcomingRooms);
-
   return (
     <RoomsTableContainer>
       <table>
@@ -118,12 +117,12 @@ export function RoomsTable() {
                 <td>{row.subtitle}</td>
                 <td>
                   {row.speakers.map((s, i, a) => (
-                    <>
-                      <StyledLink href="" key={s.id}>
+                    <Box key={s.id}>
+                      <StyledLink href="">
                         {s.firstName} {s.lastName}
                       </StyledLink>
                       {i < a.length - 1 && ","}
-                    </>
+                    </Box>
                   ))}
                 </td>
                 <td

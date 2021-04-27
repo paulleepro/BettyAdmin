@@ -1,4 +1,4 @@
-import React from "react";
+import { createElement, FC, useCallback } from "react";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
@@ -6,9 +6,11 @@ import { usePortal } from "../hooks/usePortal";
 import { Box } from "@material-ui/core";
 
 export type ModalProps = {
-  children?: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
+
+  component?: string;
+  componentProps?: any;
 };
 
 type ModalContainerProps = {
@@ -106,42 +108,53 @@ export const ModalFooter = styled.div`
   }
 `;
 
-export function Modal(props: ModalProps) {
+export const Modal: FC<ModalProps> = (props) => {
   const { isOpen, onClose, children } = props;
   const target = usePortal("main__modal");
+  const Wrapper = useCallback(
+    ({ children }) =>
+      createElement(
+        props.component || "fragment",
+        props.componentProps,
+        children
+      ),
+    []
+  );
 
   if (!target) {
     return null;
   }
 
   return createPortal(
-    <ModalContainer isOpen={isOpen}>
-      <AnimatePresence>
-        {isOpen && (
-          <OverlayContainer aria-hidden="true" onClick={onClose}>
-            <Overlay
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            />
-          </OverlayContainer>
-        )}
-      </AnimatePresence>
-      <ModalContentContainer>
+    <Wrapper>
+      <ModalContainer isOpen={isOpen}>
         <AnimatePresence>
           {isOpen && (
-            <ModalContentWrapper
-              initial={{ opacity: 0, translateY: 32, scale: 0.95 }}
-              animate={{ opacity: 1, translateY: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-            >
-              {children}
-            </ModalContentWrapper>
+            <OverlayContainer aria-hidden="true" onClick={onClose}>
+              <Overlay
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              />
+            </OverlayContainer>
           )}
         </AnimatePresence>
-      </ModalContentContainer>
-    </ModalContainer>,
+        <ModalContentContainer>
+          <AnimatePresence>
+            {isOpen && (
+              <ModalContentWrapper
+                initial={{ opacity: 0, translateY: 32, scale: 0.95 }}
+                animate={{ opacity: 1, translateY: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                {children}
+              </ModalContentWrapper>
+            )}
+          </AnimatePresence>
+        </ModalContentContainer>
+      </ModalContainer>
+    </Wrapper>,
     target
   );
-}
+};

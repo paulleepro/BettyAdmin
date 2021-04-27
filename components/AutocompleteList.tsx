@@ -46,6 +46,10 @@ export function AutocompleteList(props) {
     };
   }, []);
 
+  useEffect(() => {
+    props.onChange(values.map(props.getOptionValue));
+  }, [values]);
+
   return (
     <StyledAutocompleteList>
       <InputLabel>{props.label}</InputLabel>

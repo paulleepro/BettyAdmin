@@ -3,6 +3,7 @@ import {
   TextareaAutosize as MUITextareaAutosize,
   TextareaAutosizeProps,
 } from "@material-ui/core";
+import { FC, forwardRef } from "react";
 
 const StyledTextareaAutosize = styled(MUITextareaAutosize)`
   border: 1px solid #e5e5e5;
@@ -18,6 +19,8 @@ const StyledTextareaAutosize = styled(MUITextareaAutosize)`
   }
 `;
 
-export const TextareaAutosize = (props: TextareaAutosizeProps) => {
-  return <StyledTextareaAutosize {...props} />;
-};
+export const TextareaAutosize: FC<TextareaAutosizeProps> = forwardRef(
+  (props, ref) => {
+    return <StyledTextareaAutosize {...props} ref={ref} />;
+  }
+);
