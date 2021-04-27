@@ -1,4 +1,6 @@
-import { Box } from "@material-ui/core";
+import { Box, Button, IconButton, Link, Typography } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Autocomplete } from "./Autocomplete";
@@ -15,7 +17,7 @@ const StyledAutocompleteList = styled(Box)`
 // DebounceTimer
 let searchTO = null;
 export function AutocompleteList(props) {
-  const [values, setValues] = useState([]);
+  const [values, setValues] = useState([null]);
   const [autocompleteOptions, setAutocompleteOptions] = useState([]);
   const mountRef = useRef(null);
   const handleSearch = async (q: string) => {
@@ -30,6 +32,13 @@ export function AutocompleteList(props) {
     }, 200);
   };
 
+  const handleSelect = (option, i) => {
+    const vals = values.slice();
+    vals[i] = option;
+    setValues(vals);
+    setAutocompleteOptions([]);
+  };
+
   useEffect(() => {
     mountRef.current = true;
     return () => {
@@ -40,14 +49,43 @@ export function AutocompleteList(props) {
   return (
     <StyledAutocompleteList>
       <InputLabel>{props.label}</InputLabel>
-      <Autocomplete
-        id={`${props.id}[${values.length}]`}
-        onChange={handleSearch}
-        options={autocompleteOptions}
-        renderInput={props.renderInput}
-        renderOption={props.renderOption}
-        getOptionValue={props.getOptionValue}
-      />
+      {Array(values.length)
+        .fill(null)
+        .map((_, i) => (
+          <Box key={i} display="flex" alignItems="center" width="100%">
+            <Autocomplete
+              id={`${props.id}[${i}]`}
+              value={values[i]}
+              onChange={handleSearch}
+              onSelect={(option) => handleSelect(option, i)}
+              options={autocompleteOptions}
+              renderInput={props.renderInput}
+              renderOption={props.renderOption}
+              getOptionValue={props.getOptionValue}
+            />
+            <Box marginLeft="0.75rem">
+              <IconButton
+                size="small"
+                onClick={() =>
+                  values.length > 1
+                    ? setValues(values.filter((v, vi) => vi !== i))
+                    : setValues([null])
+                }
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        ))}
+      {values.length > 0 && (
+        <Link
+          component="button"
+          variant="body1"
+          onClick={() => setValues(values.concat(null))}
+        >
+          {props.addLabel}
+        </Link>
+      )}
     </StyledAutocompleteList>
   );
 }

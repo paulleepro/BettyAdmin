@@ -54,6 +54,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
           <Input id="subtitle" label="Show Title" margin="0 0 1.5rem 0" />
           <AutocompleteList
             label="Hosts"
+            addLabel="Add another host"
             renderInput={renderHostInput}
             renderOption={handleRenderOption}
             loadOptions={handleLoadOptions}

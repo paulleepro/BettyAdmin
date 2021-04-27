@@ -30,10 +30,12 @@ type AutocompleteProps<T = any> = {
   id: string;
   label?: string;
   options: T[];
+  value?: T;
   renderInput?: (option: T) => ReactNode;
   renderOption: (option: T) => Promise<T[]>;
   getOptionValue: (option: T) => any;
   onChange: (value: string) => void;
+  onSelect: (option: T) => void;
 };
 
 export const Autocomplete = (props: AutocompleteProps) => {
@@ -41,7 +43,6 @@ export const Autocomplete = (props: AutocompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<any>(null);
   const [value, setValue] = useState("");
-  const [selectedOption, setSelectedOption] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const focusInput = () => {
@@ -81,8 +82,7 @@ export const Autocomplete = (props: AutocompleteProps) => {
   };
 
   const handleSelect = (option) => {
-    // handleChange({ target: { value: props.getOptionValue(option) } });
-    setSelectedOption(option);
+    props.onSelect && props.onSelect(option);
     setIsOpen(false);
   };
 
@@ -103,9 +103,9 @@ export const Autocomplete = (props: AutocompleteProps) => {
           {props.label}
         </InputLabel>
       )}
-      {!isOpen && props.renderInput && selectedOption ? (
+      {!isOpen && props.renderInput && props.value ? (
         <Box onClick={() => setIsOpen(true)}>
-          {props.renderInput(selectedOption)}
+          {props.renderInput(props.value)}
         </Box>
       ) : (
         <Input
@@ -113,6 +113,7 @@ export const Autocomplete = (props: AutocompleteProps) => {
           onFocus={() => setIsOpen(true)}
           ref={inputRef}
           value={value}
+          margin="0"
         />
       )}
       {isOpen && props.options.length > 0 && value.length > 0 && (

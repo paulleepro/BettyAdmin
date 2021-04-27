@@ -5,6 +5,7 @@ import styled from "styled-components";
 export const InputContainer = styled(Box)`
   display: flex;
   flex-direction: column;
+  flex: 1;
 `;
 
 const StyledInput = styled.input`
