@@ -10,6 +10,7 @@ import { SearchBar } from "../features/dashboard/SearchBar";
 import { Title } from "../features/dashboard/Title";
 import { TitleBar } from "../features/dashboard/TitleBar";
 import { CreateEventModal } from "../features/dashboard/CreateEventModal";
+import SearchIcon from "@material-ui/icons/Search";
 
 export default function Home() {
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -24,7 +25,10 @@ export default function Home() {
         </Button>
       </TitleBar>
       <SearchBar>
-        <Input placeholder="Search" />
+        <Input
+          placeholder="Search"
+          icon={<SearchIcon style={{ color: "#1f1f1f" }} />}
+        />
       </SearchBar>
       <RoomsTable />
       <CreateEventModal

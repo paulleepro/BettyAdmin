@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box, Divider, MenuItem } from "@material-ui/core";
 import { useForm } from "react-hook-form";
-import { format, toDate, utcToZonedTime, getTimezoneOffset } from "date-fns-tz";
+import {
+  format,
+  toDate,
+  utcToZonedTime,
+  getTimezoneOffset,
+  zonedTimeToUtc,
+} from "date-fns-tz";
 
 import { Button } from "../../components/Button";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
@@ -32,7 +38,8 @@ type CreateEventModalProps = ModalProps & {
 };
 
 export function CreateEventModal(props: CreateEventModalProps) {
-  const { handleSubmit, register, setValue, trigger, watch } = useForm({
+  const { isOpen } = props;
+  const { handleSubmit, register, reset, setValue, trigger, watch } = useForm({
     defaultValues: {
       title: "",
       subtitle: "",
@@ -69,20 +76,32 @@ export function CreateEventModal(props: CreateEventModalProps) {
     startDate.setMinutes(startTime.getMinutes());
     startDate.setSeconds(0);
     startDate.setMilliseconds(0);
-    const startAt = new Date(
-      startTime.getTime() + getTimezoneOffset(data.timezone, startDate)
-    ).toISOString();
+
+    // offsetMs is the number of milliseconds the local machine
+    // is ahead of data.timezone by
+    const offsetMs =
+      -getTimezoneOffset(data.timezone) -
+      startDate.getTimezoneOffset() * 60 * 1000;
+
+    const startedAt = new Date(startDate.getTime() + offsetMs).toISOString();
+
     createUpcomingRoom({
       title: data.title,
       subtitle: data.subtitle,
       description: data.description,
       speakerIds: data.speakerIds,
-      startAt,
+      startedAt,
     })
       .then((r) => r.json())
       .then(console.log)
       .catch(console.error);
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+    }
+  }, [isOpen]);
 
   return (
     <Modal
@@ -124,7 +143,10 @@ export function CreateEventModal(props: CreateEventModalProps) {
               format="MM/dd/yyyy"
               minDate={Date.now()}
               value={values.startDate || null}
-              onChange={(d) => setValue("startDate", d?.getTime())}
+              onChange={(d) => {
+                console.log(d);
+                setValue("startDate", d?.getTime());
+              }}
             />
           </InputContainer>
           <InputContainer marginBottom="1.5rem">
@@ -133,7 +155,10 @@ export function CreateEventModal(props: CreateEventModalProps) {
               <Box maxWidth="8rem">
                 <KeyboardTimePicker
                   value={values.startTime || null}
-                  onChange={(d) => setValue("startTime", d?.getTime())}
+                  onChange={(d) => {
+                    console.log(d);
+                    setValue("startTime", d?.getTime());
+                  }}
                 />
               </Box>
               <Box marginLeft="1rem">

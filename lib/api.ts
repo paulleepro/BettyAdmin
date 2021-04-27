@@ -44,7 +44,7 @@ type CreateRoomPayload = {
   title: string;
   subtitle: string;
   description: string;
-  startAt: string;
+  startedAt: string;
   speakerIds: string[];
 };
 

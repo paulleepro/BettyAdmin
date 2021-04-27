@@ -1,11 +1,13 @@
 import { Box } from "@material-ui/core";
-import { forwardRef, InputHTMLAttributes, useState } from "react";
+import { forwardRef, InputHTMLAttributes, ReactNode, useState } from "react";
 import styled from "styled-components";
 
 export const InputContainer = styled(Box)`
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  position: relative;
 `;
 
 const StyledInput = styled.input`
@@ -24,6 +26,10 @@ const StyledInput = styled.input`
 
   &::placeholder {
     color: #bfbfbf;
+  }
+
+  &.icon {
+    padding-left: 2.5rem;
   }
 `;
 
@@ -50,10 +56,11 @@ const RequiredSpan = styled.span`
 type InputProps = {
   label?: string;
   margin?: string;
+  icon?: ReactNode;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, children, ...props }, ref) => {
+  ({ label, children, icon, ...props }, ref) => {
     const [val, setVal] = useState(props.defaultValue);
     const handleChange = (e) => {
       props.onChange && props.onChange(e);
@@ -74,7 +81,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {props.required && <RequiredSpan>*</RequiredSpan>}
           </InputLabel>
         )}
-        <StyledInput {...props} ref={ref} onChange={handleChange} />
+        <StyledInput
+          {...props}
+          ref={ref}
+          className={`${props.className} ${icon ? "icon" : ""}`}
+          onChange={handleChange}
+        />
+        {icon && (
+          <Box position="absolute" top="0" left="0" padding="0.5rem" width="2.5rem" height="2.5rem">
+            {icon}
+          </Box>
+        )}
       </InputContainer>
     );
   }

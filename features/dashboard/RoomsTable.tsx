@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
-import { Box } from "@material-ui/core";
-import { differenceInDays } from "date-fns";
+import { Box, Typography } from "@material-ui/core";
+import { differenceInCalendarDays } from "date-fns";
 import { format, utcToZonedTime } from "date-fns-tz";
 
 import styled from "styled-components";
@@ -49,6 +49,10 @@ const RoomsTableContainer = styled.div`
       td {
         padding: 0.5rem;
 
+        b {
+          font-weight: 600;
+        }
+
         p {
           margin: 0;
           padding: 0;
@@ -61,6 +65,12 @@ const RoomsTableContainer = styled.div`
 
       &:hover {
         background: #f5f5f5;
+      }
+
+      &.today {
+        td {
+          background: rgba(255, 121, 46, 0.05);
+        }
       }
     }
   }
@@ -100,19 +110,27 @@ export function RoomsTable() {
         </thead>
         <tbody>
           {upcomingRooms.map((row, rowIdx) => {
-            const date = new Date(row.startTime);
-            const laDate = utcToZonedTime(date, LA_TZ);
-            const days = differenceInDays(laDate, laNow);
-            const relativeDay = days <= 2 ? "asdf" : format(laDate, "eee");
+            const laDate = utcToZonedTime(row.startTime, LA_TZ);
+            const days = differenceInCalendarDays(laDate, laNow);
+            const relativeDay =
+              days < 2 ? (
+                days > 0 ? (
+                  "Tomorrow"
+                ) : (
+                  <b>Today</b>
+                )
+              ) : (
+                format(laDate, "eee")
+              );
             return (
-              <tr key={rowIdx}>
+              <tr key={rowIdx} className={days === 0 ? "today" : ""}>
                 <td>
                   <p className="relative-day">{relativeDay}</p>
                   <p className="date">
                     {format(laDate, "MM/dd", { timeZone: LA_TZ })}
                   </p>
                 </td>
-                <td>{format(laDate, "HH:mm a", { timeZone: LA_TZ })}</td>
+                <td>{format(laDate, "h:mm a", { timeZone: LA_TZ })}</td>
                 <td>{row.title}</td>
                 <td>{row.subtitle}</td>
                 <td>
