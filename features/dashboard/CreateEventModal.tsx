@@ -24,7 +24,7 @@ import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
 
 type CreateEventModalProps = ModalProps & {
-  event: any;
+  event?: any;
 };
 
 export function CreateEventModal(props: CreateEventModalProps) {
