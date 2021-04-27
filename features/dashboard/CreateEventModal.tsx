@@ -18,10 +18,11 @@ import { TextareaAutosize } from "../../components/TextareaAutosize";
 import { KeyboardDatePicker } from "../../components/KeyboardDatePicker";
 import { AutocompleteList } from "../../components/AutocompleteList";
 import { CustomRecurrenceModal } from "./CustomRecurrenceModal";
-import { HostOptionPreview } from "./HostOptionPreview";
+import { UserOptionPreview } from "./UserOptionPreview";
 
 import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
+import { UserOption } from "./UserOption";
 
 type CreateEventModalProps = ModalProps & {
   event?: any;
@@ -44,9 +45,9 @@ export function CreateEventModal(props: CreateEventModalProps) {
         return [];
       });
 
-  const handleRenderOption = (option) => <div>{option.username}</div>;
+  const handleRenderOption = (option) => <UserOption user={option} />;
   const renderHostInput = (user) => {
-    return <HostOptionPreview user={user} />;
+    return <UserOptionPreview user={user} />;
   };
   const onSubmit = (data) => console.log(data);
 

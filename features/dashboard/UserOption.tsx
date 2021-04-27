@@ -1,16 +1,10 @@
 import { Box, Typography } from "@material-ui/core";
 import styled from "styled-components";
 
-const HostOptionPreviewContainer = styled.div`
+const UserOptionContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
-
-  border-radius: 0.25rem;
-  border: 1px solid #e5e5e5;
-  box-sizing: border-box;
-  height: 2.25rem;
-  padding: 0.5rem;
 
   > * {
     margin-right: 0.5rem;
@@ -23,9 +17,9 @@ const HostUsername = styled(Typography)`
   font-size: 0.6875rem;
 `;
 
-export function HostOptionPreview({ user }) {
+export function UserOption({ user }) {
   return (
-    <HostOptionPreviewContainer>
+    <UserOptionContainer>
       <Box
         width="1.25rem"
         height="1.25rem"
@@ -38,6 +32,6 @@ export function HostOptionPreview({ user }) {
         {user.firstName} {user.lastName}
       </HostName>
       <HostUsername>{user.username}</HostUsername>
-    </HostOptionPreviewContainer>
+    </UserOptionContainer>
   );
 }
