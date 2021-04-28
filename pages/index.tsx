@@ -27,7 +27,7 @@ export default function Home() {
       <SearchBar>
         <Input
           placeholder="Search"
-          icon={<SearchIcon style={{ color: "#1f1f1f" }} />}
+          icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
         />
       </SearchBar>
       <RoomsTable />
