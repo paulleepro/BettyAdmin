@@ -35,6 +35,23 @@ export function post(url, data, config = {}) {
     )
   );
 }
+
+export function put(url, data, config = {}) {
+  return req(
+    url,
+    merge(
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+      config
+    )
+  );
+}
+
 export function del(url, data?, config = {}) {
   return req(
     url,
@@ -55,7 +72,7 @@ export function postLogin({ username, password }) {
   return post("/auth/login", { username, password });
 }
 
-type CreateRoomPayload = {
+export type RoomPayload = {
   title: string;
   subtitle: string;
   description: string;
@@ -63,12 +80,20 @@ type CreateRoomPayload = {
   speakerIds: string[];
 };
 
+export async function getUsersByIds(ids: string[]) {
+  return Promise.all(ids.map((id) => get(`/user/${id}`)));
+}
+
 export function getUpcomingRooms() {
   return get("/upcoming");
 }
 
-export function createUpcomingRoom(room: CreateRoomPayload) {
+export function createUpcomingRoom(room: RoomPayload) {
   return post("/upcoming", { room });
+}
+
+export function updateUpcomingRoom(id: string, room: RoomPayload) {
+  return put(`/upcoming/${id}`, { room });
 }
 
 export function deleteUpcomingRoom(id: string) {

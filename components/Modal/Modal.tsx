@@ -20,7 +20,7 @@ export const Modal: FC<ModalProps> = (props) => {
   const Wrapper = useCallback(
     ({ children }) =>
       createElement(props.component || "div", props.componentProps, children),
-    []
+    [isOpen]
   );
 
   if (!target) {

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Box, Divider, MenuItem } from "@material-ui/core";
 import { useForm } from "react-hook-form";
-import { getTimezoneOffset } from "date-fns-tz";
+import { getTimezoneOffset, utcToZonedTime } from "date-fns-tz";
 
 import { AutocompleteList } from "../../components/AutocompleteList";
 import { Button } from "../../components/Button";
@@ -23,18 +23,24 @@ import {
   ModalProps,
 } from "../../components/Modal";
 
-import { createUpcomingRoom } from "../../lib/api";
+import {
+  createUpcomingRoom,
+  updateUpcomingRoom,
+  RoomPayload,
+} from "../../lib/api";
 import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
-import { timezones } from "./constants/timezones";
+import { LA_TZ, timezones } from "./constants/timezones";
 import { nextHour } from "./constants/time";
+import { UpcomingRoom } from "../../@types/Upcoming";
+import { User } from "../../@types/User";
 
 type CreateEventModalProps = ModalProps & {
-  event?: any;
+  existing?: UpcomingRoom;
 };
 
 export function CreateEventModal(props: CreateEventModalProps) {
-  const { isOpen } = props;
+  const { isOpen, existing } = props;
   const { handleSubmit, register, reset, setValue, trigger, watch } = useForm({
     defaultValues: {
       title: "",
@@ -47,23 +53,23 @@ export function CreateEventModal(props: CreateEventModalProps) {
       speakers: [],
     },
   });
-  const title = props.event ? "Edit Event" : "Create Event";
+  const title = existing ? "Edit Event" : "Create Event";
+  const submitLabel = existing ? "Save Changes" : "Create Event";
   const [isEditingRecurrence, setIsEditingRecurrence] = useState(false);
   const values = watch();
   const isDisabled = !validate(values);
-  const handleLoadOptions = (q) =>
+  const handleLoadOptions = async (q: string): Promise<User[]> =>
     client
       .query({ query: SearchUsers, variables: { query: q } })
       .then((d) => {
         return d.data.users.results;
       })
       .catch((e) => {
-        console.log(e);
         return [];
       });
 
-  const handleRenderOption = (option) => <UserOption user={option} />;
-  const renderHostInput = (user) => {
+  const handleRenderOption = (option: User) => <UserOption user={option} />;
+  const renderHostInput = (user: User) => {
     return <UserOptionPreview user={user} />;
   };
   const onSubmit = (data) => {
@@ -81,17 +87,29 @@ export function CreateEventModal(props: CreateEventModalProps) {
       startDate.getTimezoneOffset() * 60 * 1000;
 
     const startedAt = new Date(startDate.getTime() + offsetMs).toISOString();
-
-    createUpcomingRoom({
+    const payload: RoomPayload = {
       title: data.title,
       subtitle: data.subtitle,
       description: data.description,
       speakerIds: data.speakerIds,
       startedAt,
-    })
+    };
+
+    let resp: Promise<any>;
+
+    if (existing) {
+      resp = updateUpcomingRoom(existing.id, payload);
+    } else {
+      resp = createUpcomingRoom(payload);
+    }
+
+    resp
       .then((r) => {
         if (r.ok) {
-          props.onClose();
+          // Give some time to create the room
+          setTimeout(() => {
+            props.onClose();
+          }, 250);
         }
       })
       .catch(console.error);
@@ -102,6 +120,25 @@ export function CreateEventModal(props: CreateEventModalProps) {
       reset();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (existing) {
+      const laStartTime = utcToZonedTime(existing.startTime, LA_TZ);
+      setValue("title", existing.title);
+      setValue("subtitle", existing.subtitle);
+      setValue("description", existing.description);
+      setValue("startDate", laStartTime.getTime());
+      setValue("startTime", laStartTime.getTime());
+      setValue("timezone", "America/Los_Angeles");
+      setValue(
+        "speakerIds",
+        existing.speakers.map((s) => s.id)
+      );
+      setValue("speakers", existing.speakers);
+    } else {
+      reset();
+    }
+  }, [existing]);
 
   return (
     <Modal
@@ -131,6 +168,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
             renderInput={renderHostInput}
             renderOption={handleRenderOption}
             loadOptions={handleLoadOptions}
+            defaultValue={values.speakers}
             getOptionValue={(option) => option?.id || null}
             onChange={(hosts, rawHosts) => {
               setValue("speakerIds", hosts);
@@ -205,7 +243,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
             disabled={isDisabled}
             onClick={() => trigger()}
           >
-            Create Event
+            {submitLabel}
           </Button>
         </ModalFooter>
       </ModalContent>

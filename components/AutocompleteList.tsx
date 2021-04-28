@@ -17,7 +17,8 @@ const StyledAutocompleteList = styled(Box)`
 // DebounceTimer
 let searchTO = null;
 export function AutocompleteList(props) {
-  const [values, setValues] = useState([null]);
+  const { defaultValue } = props;
+  const [values, setValues] = useState(defaultValue || [null]);
   const [autocompleteOptions, setAutocompleteOptions] = useState([]);
   const mountRef = useRef(null);
   const handleSearch = async (q: string) => {
@@ -50,38 +51,42 @@ export function AutocompleteList(props) {
     props.onChange(values.map(props.getOptionValue), values);
   }, [values]);
 
+  useEffect(() => {
+    if (defaultValue) {
+      setValues(defaultValue);
+    }
+  }, [defaultValue]);
+
   return (
     <StyledAutocompleteList>
       <InputLabel>{props.label}</InputLabel>
-      {Array(values.length)
-        .fill(null)
-        .map((_, i) => (
-          <Box key={i} display="flex" alignItems="center" width="100%">
-            <Autocomplete
-              id={`${props.id}[${i}]`}
-              value={values[i]}
-              onChange={handleSearch}
-              onSelect={(option) => handleSelect(option, i)}
-              options={autocompleteOptions}
-              renderInput={props.renderInput}
-              renderOption={props.renderOption}
-              getOptionValue={props.getOptionValue}
-            />
-            <Box marginLeft="0.75rem">
-              <IconButton
-                size="small"
-                type="button"
-                onClick={() =>
-                  values.length > 1
-                    ? setValues(values.filter((v, vi) => vi !== i))
-                    : setValues([null])
-                }
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </Box>
+      {values.map((value, i) => (
+        <Box key={i} display="flex" alignItems="center" width="100%">
+          <Autocomplete
+            id={`${props.id}[${i}]`}
+            value={value}
+            onChange={handleSearch}
+            onSelect={(option) => handleSelect(option, i)}
+            options={autocompleteOptions}
+            renderInput={props.renderInput}
+            renderOption={props.renderOption}
+            getOptionValue={props.getOptionValue}
+          />
+          <Box marginLeft="0.75rem">
+            <IconButton
+              size="small"
+              type="button"
+              onClick={() =>
+                values.length > 1
+                  ? setValues(values.filter((v, vi) => vi !== i))
+                  : setValues([null])
+              }
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
           </Box>
-        ))}
+        </Box>
+      ))}
       {values.length > 0 && (
         <Link
           component="button"

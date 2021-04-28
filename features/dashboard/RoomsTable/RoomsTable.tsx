@@ -7,22 +7,33 @@ import { GetUpcomingRooms } from "../../../graphql/queries";
 import { getRelativeDay } from "../utils/getRelativeDay";
 import { UserLinks } from "../UserLinks";
 import { LA_TZ } from "../constants/timezones";
-import { deleteUpcomingRoom } from "../../../lib/api";
+import { deleteUpcomingRoom, getUsersByIds } from "../../../lib/api";
 import { RoomsTableContainer } from "./RoomsTableContainer";
 import { RoomsTableWrapper } from "./RoomsTableWrapper";
+import { UpcomingRoom } from "../../../@types/Upcoming";
+import { IconButton } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 type RoomsTableProps = {
+  onClick: (room: UpcomingRoom) => void;
   lastFetchRequested?: Number;
 };
 
 export function RoomsTable(props: RoomsTableProps) {
   const { lastFetchRequested } = props;
-  const { loading, error, data, refetch } = useQuery(GetUpcomingRooms);
+
+  const { loading, error, data, refetch } = useQuery(GetUpcomingRooms, {
+    pollInterval: 5000,
+  });
+
+  const [shouldShowToday, setShouldShowToday] = useState(false);
+
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const firstTodayRef = useRef<HTMLTableRowElement>(null);
   const observer = useRef<IntersectionObserver>(null);
+
   const laNow = utcToZonedTime(new Date(), LA_TZ);
-  const [shouldShowToday, setShouldShowToday] = useState(false);
+
   const skipToToday = () => {
     if (!firstTodayRef.current) {
       return;
@@ -33,6 +44,13 @@ export function RoomsTable(props: RoomsTableProps) {
       block: "start",
       inline: "start",
     });
+  };
+
+  const handleDeleteRoom = async (id) => {
+    await deleteUpcomingRoom(id);
+    setTimeout(() => {
+      refetch();
+    }, 250);
   };
 
   // TODO: Refactor into hook
@@ -93,6 +111,7 @@ export function RoomsTable(props: RoomsTableProps) {
               <th>Show</th>
               <th>Hosts</th>
               <th>Description</th>
+              <th>&nbsp;</th>
             </tr>
           </thead>
           <tbody ref={tableBodyRef}>
@@ -103,6 +122,7 @@ export function RoomsTable(props: RoomsTableProps) {
                 <tr
                   key={rowIdx}
                   className={days === 0 ? "today" : ""}
+                  onClick={() => props.onClick(row)}
                   onDoubleClick={() => {
                     if (
                       confirm(
@@ -127,6 +147,16 @@ export function RoomsTable(props: RoomsTableProps) {
                     <UserLinks users={row.speakers} />
                   </td>
                   <td className="description">{row.description}</td>
+                  <td style={{ maxWidth: "4rem" }}>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteRoom(row.id);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </td>
                 </tr>
               );
             })}

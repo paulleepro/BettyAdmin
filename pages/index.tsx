@@ -12,15 +12,18 @@ import { TitleBar } from "../features/dashboard/TitleBar";
 import { CreateEventModal } from "../features/dashboard/CreateEventModal";
 import SearchIcon from "@material-ui/icons/Search";
 
+import { UpcomingRoom } from "../@types/Upcoming";
+
 export default function Home() {
-  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+  const [editingRoom, setEditingRoom] = useState<UpcomingRoom>(null);
+  const [isCreating, setIsCreating] = useState(false);
   const [lastFetchRequested, setLastFetchRequested] = useState(Date.now());
 
   return (
     <MainLayout>
       <TitleBar>
         <Title>Schedule</Title>
-        <Button onClick={() => setIsCreatingEvent(true)} color="primary">
+        <Button onClick={() => setIsCreating(true)} color="primary">
           <AddIcon />
           Create Event
         </Button>
@@ -31,12 +34,17 @@ export default function Home() {
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
         />
       </SearchBar>
-      <RoomsTable lastFetchRequested={lastFetchRequested} />
+      <RoomsTable
+        lastFetchRequested={lastFetchRequested}
+        onClick={setEditingRoom}
+      />
       <CreateEventModal
-        isOpen={isCreatingEvent}
+        isOpen={isCreating || editingRoom !== null}
+        existing={editingRoom}
         onClose={() => {
           setLastFetchRequested(Date.now());
-          setIsCreatingEvent(false);
+          setIsCreating(false);
+          setEditingRoom(null);
         }}
       />
     </MainLayout>

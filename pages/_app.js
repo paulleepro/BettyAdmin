@@ -5,12 +5,11 @@ import DateFnsUtils from "@date-io/date-fns";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { StylesProvider, ThemeProvider } from "@material-ui/core/styles";
 import { ApolloProvider } from "@apollo/client";
+import "../styles/globals.css";
 
 import { client } from "../graphql/client";
 import store, { selectUser } from "../store";
 import { theme } from "../styles/theme";
-
-import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
   return (
