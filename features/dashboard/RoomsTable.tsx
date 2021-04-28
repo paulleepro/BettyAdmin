@@ -135,6 +135,7 @@ export function RoomsTable() {
     });
   };
 
+  // TODO: Refactor into hook
   useEffect(() => {
     if (!observer.current) {
       // Observe first today row and if it's not visible, show
