@@ -92,8 +92,11 @@ export function CreateEventModal(props: CreateEventModalProps) {
       speakerIds: data.speakerIds,
       startedAt,
     })
-      .then((r) => r.json())
-      .then(console.log)
+      .then((r) => {
+        if (r.ok) {
+          props.onClose();
+        }
+      })
       .catch(console.error);
   };
 
@@ -119,7 +122,12 @@ export function CreateEventModal(props: CreateEventModalProps) {
             margin="0 0 1.5rem 0"
             {...register("title")}
           />
-          <Input id="subtitle" label="Show Title" margin="0 0 1.5rem 0" />
+          <Input
+            id="subtitle"
+            label="Show Title"
+            margin="0 0 1.5rem 0"
+            {...register("subtitle")}
+          />
           <AutocompleteList
             label="Hosts"
             addLabel="Add another host"
@@ -143,10 +151,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
               format="MM/dd/yyyy"
               minDate={Date.now()}
               value={values.startDate || null}
-              onChange={(d) => {
-                console.log(d);
-                setValue("startDate", d?.getTime());
-              }}
+              onChange={(d) => setValue("startDate", d?.getTime())}
             />
           </InputContainer>
           <InputContainer marginBottom="1.5rem">
@@ -155,10 +160,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
               <Box maxWidth="8rem">
                 <KeyboardTimePicker
                   value={values.startTime || null}
-                  onChange={(d) => {
-                    console.log(d);
-                    setValue("startTime", d?.getTime());
-                  }}
+                  onChange={(d) => setValue("startTime", d?.getTime())}
                 />
               </Box>
               <Box marginLeft="1rem">

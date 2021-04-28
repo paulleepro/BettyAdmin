@@ -14,6 +14,7 @@ import SearchIcon from "@material-ui/icons/Search";
 
 export default function Home() {
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+  const [lastFetchRequested, setLastFetchRequested] = useState(Date.now());
 
   return (
     <MainLayout>
@@ -30,10 +31,13 @@ export default function Home() {
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
         />
       </SearchBar>
-      <RoomsTable />
+      <RoomsTable lastFetchRequested={lastFetchRequested} />
       <CreateEventModal
         isOpen={isCreatingEvent}
-        onClose={() => setIsCreatingEvent(false)}
+        onClose={() => {
+          setLastFetchRequested(Date.now());
+          setIsCreatingEvent(false);
+        }}
       />
     </MainLayout>
   );

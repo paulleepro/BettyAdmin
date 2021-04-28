@@ -116,8 +116,13 @@ const StyledLink = styled.a`
   }
 `;
 
-export function RoomsTable() {
-  const { loading, error, data } = useQuery(GetUpcomingRooms);
+type RoomsTableProps = {
+  lastFetchRequested?: Number;
+};
+
+export function RoomsTable(props: RoomsTableProps) {
+  const { lastFetchRequested } = props;
+  const { loading, error, data, refetch } = useQuery(GetUpcomingRooms);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const firstTodayRef = useRef<HTMLTableRowElement>(null);
   const observer = useRef<IntersectionObserver>(null);
@@ -165,6 +170,10 @@ export function RoomsTable() {
 
     return () => observer.current?.disconnect();
   }, [data]);
+
+  useEffect(() => {
+    refetch();
+  }, [lastFetchRequested]);
 
   if (loading || error) {
     return null;
