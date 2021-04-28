@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
 import { Box, Divider, MenuItem } from "@material-ui/core";
 import { useForm } from "react-hook-form";
-import {
-  format,
-  toDate,
-  utcToZonedTime,
-  getTimezoneOffset,
-  zonedTimeToUtc,
-} from "date-fns-tz";
+import { getTimezoneOffset } from "date-fns-tz";
 
+import { AutocompleteList } from "../../components/AutocompleteList";
 import { Button } from "../../components/Button";
+import { CustomRecurrenceModal } from "./CustomRecurrenceModal";
+import { EventPreview } from "./EventPreview";
 import { Input, InputContainer, InputLabel } from "../../components/Input";
+import { KeyboardDatePicker } from "../../components/KeyboardDatePicker";
+import { KeyboardTimePicker } from "../../components/KeyboardTimePicker";
+import { Select } from "../../components/Select";
+import { TextareaAutosize } from "../../components/TextareaAutosize";
+import { UserOption } from "./UserOption";
+import { UserOptionPreview } from "./UserOptionPreview";
 import {
   Modal,
   ModalBody,
@@ -20,18 +22,12 @@ import {
   ModalHeader,
   ModalProps,
 } from "../../components/Modal";
-import { Select } from "../../components/Select";
-import { TextareaAutosize } from "../../components/TextareaAutosize";
-import { KeyboardDatePicker } from "../../components/KeyboardDatePicker";
-import { AutocompleteList } from "../../components/AutocompleteList";
-import { CustomRecurrenceModal } from "./CustomRecurrenceModal";
-import { UserOptionPreview } from "./UserOptionPreview";
 
+import { createUpcomingRoom } from "../../lib/api";
 import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
-import { UserOption } from "./UserOption";
-import { KeyboardTimePicker } from "../../components/KeyboardTimePicker";
-import { createUpcomingRoom } from "../../lib/api";
+import { timezones } from "./constants/timezones";
+import { nextHour } from "./constants/time";
 
 type CreateEventModalProps = ModalProps & {
   event?: any;
@@ -44,10 +40,11 @@ export function CreateEventModal(props: CreateEventModalProps) {
       title: "",
       subtitle: "",
       description: "",
-      startTime: null,
-      startDate: null,
+      startDate: Date.now(),
+      startTime: nextHour().getTime(),
       timezone: "America/Los_Angeles",
       speakerIds: [],
+      speakers: [],
     },
   });
   const title = props.event ? "Edit Event" : "Create Event";
@@ -112,7 +109,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
       component="form"
       componentProps={{ onSubmit: handleSubmit(onSubmit) }}
     >
-      <Preview />
+      <EventPreview values={values} />
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
         <ModalBody>
@@ -135,7 +132,10 @@ export function CreateEventModal(props: CreateEventModalProps) {
             renderOption={handleRenderOption}
             loadOptions={handleLoadOptions}
             getOptionValue={(option) => option?.id || null}
-            onChange={(hosts) => setValue("speakerIds", hosts)}
+            onChange={(hosts, rawHosts) => {
+              setValue("speakerIds", hosts);
+              setValue("speakers", rawHosts);
+            }}
           />
           <InputContainer marginBottom="1.5rem">
             <InputLabel htmlFor="description">Description</InputLabel>
@@ -165,9 +165,11 @@ export function CreateEventModal(props: CreateEventModalProps) {
               </Box>
               <Box marginLeft="1rem">
                 <Select value={values.timezone} {...register("timezone")}>
-                  <MenuItem value="America/New_York">EST</MenuItem>
-                  <MenuItem value="America/Chicago">CST</MenuItem>
-                  <MenuItem value="America/Los_Angeles">PST</MenuItem>
+                  {Object.entries(timezones).map(([value, label]) => (
+                    <MenuItem key={value} value={value}>
+                      {label}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Box>
             </Box>
@@ -212,38 +214,6 @@ export function CreateEventModal(props: CreateEventModalProps) {
         onClose={() => setIsEditingRecurrence(false)}
       />
     </Modal>
-  );
-}
-
-const PreviewTitle = styled(Box)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 21.5rem;
-  height: 1.75rem;
-
-  background: #858585;
-  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  color: #fff;
-`;
-
-const StyledPreview = styled(Box)`
-  margin-right: 1rem;
-  margin-top: 20rem;
-
-  @media screen and (max-height: 800px) {
-    align-self: center;
-    margin-top: 0;
-  }
-`;
-
-function Preview(props: any) {
-  return (
-    <StyledPreview marginRight="1rem">
-      <PreviewTitle>Preview</PreviewTitle>
-    </StyledPreview>
   );
 }
 

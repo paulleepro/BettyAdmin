@@ -35,6 +35,21 @@ export function post(url, data, config = {}) {
     )
   );
 }
+export function del(url, data?, config = {}) {
+  return req(
+    url,
+    merge(
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data && JSON.stringify(data),
+      },
+      config
+    )
+  );
+}
 
 export function postLogin({ username, password }) {
   return post("/auth/login", { username, password });
@@ -51,6 +66,11 @@ type CreateRoomPayload = {
 export function getUpcomingRooms() {
   return get("/upcoming");
 }
+
 export function createUpcomingRoom(room: CreateRoomPayload) {
   return post("/upcoming", { room });
+}
+
+export function deleteUpcomingRoom(id: string) {
+  return del(`/upcoming/${id}`);
 }

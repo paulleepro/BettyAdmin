@@ -5,7 +5,7 @@ import { Input } from "../components/Input";
 import AddIcon from "../components/icons/Add";
 import { Button } from "../components/Button";
 
-import { RoomsTable } from "../features/dashboard/RoomsTable";
+import { RoomsTable } from "../features/dashboard/RoomsTable/RoomsTable";
 import { SearchBar } from "../features/dashboard/SearchBar";
 import { Title } from "../features/dashboard/Title";
 import { TitleBar } from "../features/dashboard/TitleBar";

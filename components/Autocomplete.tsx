@@ -1,7 +1,7 @@
-import { Box, BoxProps } from "@material-ui/core";
-import { ComponentType, ReactNode, useEffect, useRef, useState } from "react";
-import { useClickAway, useDebounce } from "react-use";
-import styled, { StyledComponent } from "styled-components";
+import { Box } from "@material-ui/core";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { useClickAway } from "react-use";
+import styled from "styled-components";
 
 import { Input, InputContainer, InputLabel } from "./Input";
 

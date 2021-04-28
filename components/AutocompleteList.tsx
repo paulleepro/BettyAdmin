@@ -1,10 +1,10 @@
-import { Box, Button, IconButton, Link, Typography } from "@material-ui/core";
+import { Box, IconButton, Link } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Autocomplete } from "./Autocomplete";
-import { Input, InputLabel } from "./Input";
+import { InputLabel } from "./Input";
 
 const StyledAutocompleteList = styled(Box)`
   margin-bottom: 1.5rem;
@@ -47,7 +47,7 @@ export function AutocompleteList(props) {
   }, []);
 
   useEffect(() => {
-    props.onChange(values.map(props.getOptionValue));
+    props.onChange(values.map(props.getOptionValue), values);
   }, [values]);
 
   return (
@@ -70,6 +70,7 @@ export function AutocompleteList(props) {
             <Box marginLeft="0.75rem">
               <IconButton
                 size="small"
+                type="button"
                 onClick={() =>
                   values.length > 1
                     ? setValues(values.filter((v, vi) => vi !== i))
@@ -84,6 +85,7 @@ export function AutocompleteList(props) {
       {values.length > 0 && (
         <Link
           component="button"
+          type="button"
           variant="body1"
           onClick={() => setValues(values.concat(null))}
         >
