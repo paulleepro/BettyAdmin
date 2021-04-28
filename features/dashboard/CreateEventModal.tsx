@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 import { Box, Divider, MenuItem } from "@material-ui/core";
 import { useForm } from "react-hook-form";
 import { getTimezoneOffset, utcToZonedTime } from "date-fns-tz";
@@ -34,6 +35,18 @@ import { LA_TZ, timezones } from "./constants/timezones";
 import { nextHour } from "./constants/time";
 import { UpcomingRoom } from "../../@types/Upcoming";
 import { User } from "../../@types/User";
+
+const EventID = styled(Box)`
+  align-self: flex-start;
+
+  background: #f5f5f5;
+  border-radius: 0.25rem;
+  color: #858585;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.5rem;
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+`;
 
 type CreateEventModalProps = ModalProps & {
   existing?: UpcomingRoom;
@@ -156,6 +169,9 @@ export function CreateEventModal(props: CreateEventModalProps) {
             margin="0 0 1.5rem 0"
             {...register("title")}
           />
+          {existing && (
+            <EventID borderRadius="0.25rem">ID: {existing.id}</EventID>
+          )}
           <Input
             id="subtitle"
             label="Show Title"
