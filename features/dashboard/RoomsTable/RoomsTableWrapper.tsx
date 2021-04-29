@@ -61,10 +61,26 @@ export const RoomsTableWrapper = styled.div`
           overflow: hidden;
           text-overflow: ellipsis;
         }
+
+        &.actions {
+          * {
+            opacity: 0;
+          }
+        }
       }
 
       &:hover {
         background: #f5f5f5;
+
+        td {
+          &.actions {
+            text-align: center;
+
+            * {
+              opacity: 1;
+            }
+          }
+        }
       }
 
       &.today {

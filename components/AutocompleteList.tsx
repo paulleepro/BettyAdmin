@@ -18,7 +18,7 @@ const StyledAutocompleteList = styled(Box)`
 let searchTO = null;
 export function AutocompleteList(props) {
   const { defaultValue } = props;
-  const [values, setValues] = useState(defaultValue || [null]);
+  const [values, setValues] = useState([null]);
   const [autocompleteOptions, setAutocompleteOptions] = useState([]);
   const mountRef = useRef(null);
   const handleSearch = async (q: string) => {
@@ -40,6 +40,13 @@ export function AutocompleteList(props) {
     setAutocompleteOptions([]);
   };
 
+  const handleAdd = () => {
+    if (values.includes(null)) {
+      return;
+    }
+    setValues(values.concat(null));
+  };
+
   useEffect(() => {
     mountRef.current = true;
     return () => {
@@ -52,7 +59,7 @@ export function AutocompleteList(props) {
   }, [values]);
 
   useEffect(() => {
-    if (defaultValue) {
+    if (defaultValue?.length) {
       setValues(defaultValue);
     }
   }, [defaultValue]);
@@ -92,7 +99,7 @@ export function AutocompleteList(props) {
           component="button"
           type="button"
           variant="body1"
-          onClick={() => setValues(values.concat(null))}
+          onClick={handleAdd}
         >
           {props.addLabel}
         </Link>

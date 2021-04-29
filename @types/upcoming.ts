@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from "./user";
 
 export type UpcomingRoom = {
   id: string;
@@ -7,6 +7,7 @@ export type UpcomingRoom = {
   description: string;
   startTime: number;
   interestedCount: string;
+  createdAt: string;
 
   speakers: User[];
 };

@@ -10,6 +10,8 @@ export const GetUpcomingRooms = gql`
       description
       startTime
       interestedCount
+      # createdAt
+
       speakers {
         id
         username

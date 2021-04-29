@@ -5,6 +5,9 @@ export const theme = createMuiTheme({
     primary: {
       main: "#0B7CE5",
     },
+    action: {
+      active: "#9a9a9a",
+    },
   },
   typography: {
     fontFamily: [

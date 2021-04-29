@@ -7,14 +7,17 @@ import { GetUpcomingRooms } from "../../../graphql/queries";
 import { getRelativeDay } from "../utils/getRelativeDay";
 import { UserLinks } from "../UserLinks";
 import { LA_TZ } from "../constants/timezones";
-import { deleteUpcomingRoom, getUsersByIds } from "../../../lib/api";
+import { deleteUpcomingRoom } from "../../../lib/api";
 import { RoomsTableContainer } from "./RoomsTableContainer";
 import { RoomsTableWrapper } from "./RoomsTableWrapper";
-import { UpcomingRoom } from "../../../@types/Upcoming";
+import { UpcomingRoom } from "../../../@types/upcoming";
 import { IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 
+type RoomFilters = {};
+
 type RoomsTableProps = {
+  filters?: RoomFilters;
   onClick: (room: UpcomingRoom) => void;
   lastFetchRequested?: Number;
 };
@@ -23,7 +26,7 @@ export function RoomsTable(props: RoomsTableProps) {
   const { lastFetchRequested } = props;
 
   const { loading, error, data, refetch } = useQuery(GetUpcomingRooms, {
-    pollInterval: 5000,
+    pollInterval: 30000,
   });
 
   const [shouldShowToday, setShouldShowToday] = useState(false);
@@ -123,16 +126,6 @@ export function RoomsTable(props: RoomsTableProps) {
                   key={rowIdx}
                   className={days === 0 ? "today" : ""}
                   onClick={() => props.onClick(row)}
-                  onDoubleClick={() => {
-                    if (
-                      confirm(
-                        "Are you sure you want to delete this upcoming room?"
-                      )
-                    ) {
-                      deleteUpcomingRoom(row.id);
-                      refetch();
-                    }
-                  }}
                 >
                   <td>
                     <p className="relative-day">{relativeDay}</p>
@@ -147,14 +140,14 @@ export function RoomsTable(props: RoomsTableProps) {
                     <UserLinks users={row.speakers} />
                   </td>
                   <td className="description">{row.description}</td>
-                  <td style={{ maxWidth: "4rem" }}>
+                  <td className="actions">
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteRoom(row.id);
                       }}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon color="action" fontSize="small" />
                     </IconButton>
                   </td>
                 </tr>

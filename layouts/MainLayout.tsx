@@ -6,7 +6,7 @@ import { LayoutContainer } from "../components/LayoutContainer";
 
 const Wrapper = styled.div`
   display: flex;
-  margin: 1.5rem 1.5rem 0 1.5rem;
+  margin: 1.5rem 2rem 0 2rem;
   padding-bottom: 1.5rem;
   overflow: hidden;
 `;

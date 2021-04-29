@@ -12,7 +12,7 @@ import { TitleBar } from "../features/dashboard/TitleBar";
 import { CreateEventModal } from "../features/dashboard/CreateEventModal";
 import SearchIcon from "@material-ui/icons/Search";
 
-import { UpcomingRoom } from "../@types/Upcoming";
+import { UpcomingRoom } from "../@types/upcoming";
 
 export default function Home() {
   const [editingRoom, setEditingRoom] = useState<UpcomingRoom>(null);

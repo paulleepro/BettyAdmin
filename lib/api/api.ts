@@ -1,5 +1,5 @@
 import merge from "lodash/merge";
-import store from "../store";
+import store from "../../store";
 
 export function req(url, config) {
   const token = store.getState().auth.user?.token;
@@ -66,36 +66,4 @@ export function del(url, data?, config = {}) {
       config
     )
   );
-}
-
-export function postLogin({ username, password }) {
-  return post("/auth/login", { username, password });
-}
-
-export type RoomPayload = {
-  title: string;
-  subtitle: string;
-  description: string;
-  startedAt: string;
-  speakerIds: string[];
-};
-
-export async function getUsersByIds(ids: string[]) {
-  return Promise.all(ids.map((id) => get(`/user/${id}`)));
-}
-
-export function getUpcomingRooms() {
-  return get("/upcoming");
-}
-
-export function createUpcomingRoom(room: RoomPayload) {
-  return post("/upcoming", { room });
-}
-
-export function updateUpcomingRoom(id: string, room: RoomPayload) {
-  return put(`/upcoming/${id}`, { room });
-}
-
-export function deleteUpcomingRoom(id: string) {
-  return del(`/upcoming/${id}`);
 }

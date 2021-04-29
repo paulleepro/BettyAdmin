@@ -25,16 +25,18 @@ import {
 } from "../../components/Modal";
 
 import {
+  RoomPayload,
   createUpcomingRoom,
   updateUpcomingRoom,
-  RoomPayload,
 } from "../../lib/api";
 import { client } from "../../graphql/client";
 import { SearchUsers } from "../../graphql/queries";
+
 import { LA_TZ, timezones } from "./constants/timezones";
 import { nextHour } from "./constants/time";
-import { UpcomingRoom } from "../../@types/Upcoming";
-import { User } from "../../@types/User";
+
+import { UpcomingRoom } from "../../@types/upcoming";
+import { User } from "../../@types/user";
 
 const EventID = styled(Box)`
   align-self: flex-start;
