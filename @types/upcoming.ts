@@ -7,7 +7,6 @@ export type UpcomingRoom = {
   description: string;
   startTime: number;
   interestedCount: string;
-  createdAt: string;
 
   speakers: User[];
 };
