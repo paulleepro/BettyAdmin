@@ -1,12 +1,12 @@
-import { FC } from "react";
-import styled from "styled-components";
-import { Header } from "../components/Header";
-import { Sidebar } from "../components/Sidebar";
-import { LayoutContainer } from "../components/LayoutContainer";
+import { FC } from 'react';
+import styled from 'styled-components';
+import { Header } from '../components/Header';
+import { Sidebar } from '../components/Sidebar';
+import { LayoutContainer } from '../components/LayoutContainer';
 
 const Wrapper = styled.div`
   display: flex;
-  margin: 1.5rem 2rem 0 2rem;
+  margin: 1.5rem 2rem 0 0rem;
   padding-bottom: 1.5rem;
   overflow: hidden;
 `;

@@ -1,12 +1,15 @@
-import Link, { LinkProps } from "next/link";
+import Link, { LinkProps } from 'next/link';
+import styled from 'styled-components';
+import { ReactNode } from 'react';
+import { useRouter } from 'next/router';
+
 import {
-  Experimental__IconStations,
-  IconBanActive,
-  IconFlag,
-  IconReleased,
-} from "@spotify-internal/encore-web";
-import styled from "styled-components";
-import { ReactNode } from "react";
+  BanIcon,
+  CalendarIcon,
+  FlagIcon,
+  ListViewIcon,
+  LiveIcon,
+} from '../components/icons';
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -15,6 +18,7 @@ const SidebarContainer = styled.div`
   font-family: spotify-circular;
   margin-right: 1rem;
   width: 200px;
+  overflow: auto;
 `;
 
 const SidebarSectionLabel = styled.div`
@@ -23,26 +27,51 @@ const SidebarSectionLabel = styled.div`
   font-weight: 900;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  padding-left: 2rem;
 
   margin: 1.5rem 0 0.75rem 0;
 `;
 
-const StyledSidebarItem = styled.a`
+const StyledSidebarItem = styled.a<{ active: boolean }>`
   display: flex;
   align-items: center;
 
-  color: #868686;
   cursor: pointer;
-  height: 2.25rem;
-  margin-bottom: 0.5rem;
+  height: 1.5rem;
+  margin: 1rem 0;
 
   background: transparent;
   font-family: spotify-circular;
   font-size: 0.875rem;
   font-weight: 900;
+  padding-left: 2rem;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 0.25rem;
+    height: 100%;
+    background-color: ${(props) => (props.active ? `#1ed760` : 'transparent')};
+  }
+
+  color: ${(props) => (props.active ? `#000` : '#868686')};
+
+  &:hover {
+    color: #000;
+    svg path {
+      fill-opacity: 1;
+    }
+  }
 
   svg {
     margin-right: 1rem;
+
+    path {
+      fill: #000;
+      fill-opacity: ${(props) => (props.active ? '1' : '0.5')};
+    }
   }
 `;
 
@@ -51,9 +80,13 @@ type SidebarItemProps = {
 } & LinkProps;
 
 function SidebarItem(props: SidebarItemProps) {
+  const router = useRouter();
+
   return (
     <Link href={props.href}>
-      <StyledSidebarItem>{props.children}</StyledSidebarItem>
+      <StyledSidebarItem active={props.href === router.pathname}>
+        {props.children}
+      </StyledSidebarItem>
     </Link>
   );
 }
@@ -62,24 +95,24 @@ export const Sidebar = () => (
   <SidebarContainer>
     <SidebarSectionLabel>Feed</SidebarSectionLabel>
     <SidebarItem href="/live">
-      <Experimental__IconStations />
+      <LiveIcon />
       Live Rooms
     </SidebarItem>
     <SidebarItem href="/">
-      <IconReleased />
+      <CalendarIcon />
       Schedule
     </SidebarItem>
     <SidebarSectionLabel>Moderation</SidebarSectionLabel>
     <SidebarItem href="/ban-users">
-      <IconBanActive />
+      <BanIcon />
       Ban Users
     </SidebarItem>
     <SidebarItem href="/user-reports">
-      <IconFlag />
+      <FlagIcon />
       User Reports
     </SidebarItem>
     <SidebarItem href="/waitlist">
-      <IconReleased />
+      <ListViewIcon />
       Waitlist
     </SidebarItem>
   </SidebarContainer>
