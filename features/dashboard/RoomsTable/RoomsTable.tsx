@@ -136,7 +136,9 @@ export function RoomsTable(props: RoomsTableProps) {
                       {format(laDate, "MM/dd", { timeZone: LA_TZ })}
                     </p>
                   </td>
-                  <td>{format(laDate, "h:mm a", { timeZone: LA_TZ })}</td>
+                  <td className="nowrap">
+                    {format(laDate, "h:mm a", { timeZone: LA_TZ })}
+                  </td>
                   <td>{row.title}</td>
                   <td>{row.subtitle}</td>
                   <td>

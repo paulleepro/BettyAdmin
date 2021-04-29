@@ -36,6 +36,7 @@ export const TableWrapper = styled.div`
         padding: 0.5rem;
         text-align: left;
         text-transform: uppercase;
+        white-space: nowrap;
       }
 
       td {
@@ -53,6 +54,10 @@ export const TableWrapper = styled.div`
           &.date {
             color: #bfbfbf;
           }
+        }
+
+        &.nowrap {
+          white-space: nowrap;
         }
       }
 

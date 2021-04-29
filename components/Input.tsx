@@ -10,7 +10,7 @@ export const InputContainer = styled(Box)`
   position: relative;
 `;
 
-const StyledInput = styled.input`
+export const StyledInput = styled.input`
   border-radius: 0.25rem;
   border: 1px solid #e5e5e5;
   font-family: "Infra";
@@ -88,7 +88,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           onChange={handleChange}
         />
         {icon && (
-          <Box position="absolute" top="0" left="0" padding="0.5rem" width="2.5rem" height="2.5rem">
+          <Box
+            position="absolute"
+            top="0"
+            left="0"
+            padding="0.5rem"
+            width="1.5rem"
+            height="1.5rem"
+          >
             {icon}
           </Box>
         )}

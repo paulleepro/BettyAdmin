@@ -16,7 +16,7 @@ export type ModalProps = {
 
 export const Modal: FC<ModalProps> = (props) => {
   const { isOpen, onClose, children } = props;
-  const target = usePortal("main__modal");
+  const target = usePortal("portal__modal");
   const Wrapper = useCallback(
     ({ children }) =>
       createElement(props.component || "div", props.componentProps, children),

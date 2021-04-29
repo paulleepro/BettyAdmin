@@ -24,7 +24,8 @@ const StyledButton = styled(MUIButton)`
     background-color: #1f1f1f;
   }
 
-  &.MuiButton-contained {
+  &.MuiButton-contained,
+  &.MuiButton-text {
     background: transparent;
     border-color: transparent;
     color: #858585;
@@ -35,9 +36,21 @@ const StyledButton = styled(MUIButton)`
     }
   }
 
+  &.MuiButton-contained {
+    color: #fff;
+
+    &:hover,
+    &:active {
+      color: #fff;
+    }
+
+    &.Mui-disabled {
+      background: #bfbfbf;
+    }
+  }
+
   &.MuiButton-containedPrimary {
     background: linear-gradient(266.53deg, #ff0000 0%, #ff5c00 100%);
-    color: #fff;
 
     &:hover {
       background: linear-gradient(
@@ -46,7 +59,6 @@ const StyledButton = styled(MUIButton)`
           rgba(0, 0, 0, 0.15)
         ),
         linear-gradient(266.53deg, #ff0000 0%, #ff5c00 100%);
-      color: #fff;
     }
 
     &:active {
@@ -57,14 +69,34 @@ const StyledButton = styled(MUIButton)`
         ),
         linear-gradient(266.53deg, #ff0000 0%, #ff5c00 100%);
     }
-
-    &.Mui-disabled {
-      background: #bfbfbf;
-    }
   }
 
   &.MuiButton-containedSecondary {
-    color: #0b7ce5;
+    background: #0b7ce5;
+
+    &:hover {
+      background: #096ac3;
+    }
+
+    &:active {
+      background: #085dac;
+    }
+  }
+
+  &.MuiButton-textSecondary {
+    color: #1f1f1f;
+
+    &:hover {
+      color: #096ac3;
+    }
+  }
+
+  &.MuiButton-sizeSmall {
+    padding: 0.25rem 0.75rem;
+
+    span {
+      font-size: 0.875rem;
+    }
   }
 
   svg {
@@ -74,7 +106,7 @@ const StyledButton = styled(MUIButton)`
 
 export const Button: FC<ButtonProps> = (props) => {
   return (
-    <StyledButton variant="contained" {...props}>
+    <StyledButton className="btn-blue" variant="contained" {...props}>
       {props.children}
     </StyledButton>
   );

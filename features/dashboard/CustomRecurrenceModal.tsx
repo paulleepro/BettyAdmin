@@ -124,7 +124,7 @@ export function CustomRecurrenceModal(props: ModalProps) {
             <Button color="default" onClick={() => props.onClose()}>
               Cancel
             </Button>
-            <Button color="secondary" type="submit">
+            <Button color="secondary" variant="text" type="submit">
               Done
             </Button>
           </ModalFooter>

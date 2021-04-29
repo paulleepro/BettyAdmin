@@ -6,6 +6,7 @@ import AddIcon from "../components/icons/Add";
 import { Button } from "../components/Button";
 
 import { RoomsTable } from "../features/dashboard/RoomsTable/RoomsTable";
+import { Filters } from "../features/dashboard/RoomsTable/Filters";
 import { SearchBar } from "../features/dashboard/SearchBar";
 import { Title } from "../features/dashboard/Title";
 import { TitleBar } from "../features/dashboard/TitleBar";
@@ -13,8 +14,7 @@ import { CreateEventModal } from "../features/dashboard/CreateEventModal";
 import SearchIcon from "@material-ui/icons/Search";
 
 import { UpcomingRoom } from "../@types/upcoming";
-import { useQuery } from "@apollo/client";
-import { GetBannedUsers } from "../graphql/queries/ban";
+import { Box } from "@material-ui/core";
 
 export default function Home() {
   const [editingRoom, setEditingRoom] = useState<UpcomingRoom>(null);
@@ -34,7 +34,9 @@ export default function Home() {
         <Input
           placeholder="Search"
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
+          margin="0"
         />
+        {/* <Filters /> */}
       </SearchBar>
       <RoomsTable
         lastFetchRequested={lastFetchRequested}
