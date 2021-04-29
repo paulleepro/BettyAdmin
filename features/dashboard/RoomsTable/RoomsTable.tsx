@@ -1,18 +1,21 @@
 import { useQuery } from "@apollo/client";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { useEffect, useRef, useState } from "react";
-
-import { Button } from "../../../components/Button";
-import { GetUpcomingRooms } from "../../../graphql/queries";
-import { getRelativeDay } from "../utils/getRelativeDay";
-import { UserLinks } from "../UserLinks";
-import { LA_TZ } from "../constants/timezones";
-import { deleteUpcomingRoom } from "../../../lib/api";
-import { RoomsTableContainer } from "./RoomsTableContainer";
-import { RoomsTableWrapper } from "./RoomsTableWrapper";
-import { UpcomingRoom } from "../../../@types/upcoming";
 import { IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+
+import { Button } from "../../../components/Button";
+import { RoomsTableContainer } from "./RoomsTableContainer";
+import { RoomsTableWrapper } from "./RoomsTableWrapper";
+import { UserLinks } from "../UserLinks";
+
+import { POLL_INTERVAL } from "../../../constants/query";
+import { LA_TZ } from "../constants/timezones";
+import { getRelativeDay } from "../utils/getRelativeDay";
+import { deleteUpcomingRoom } from "../../../lib/api";
+import { GetUpcomingRooms } from "../../../graphql/queries";
+
+import { UpcomingRoom } from "../../../@types/upcoming";
 
 type RoomFilters = {};
 
@@ -26,7 +29,7 @@ export function RoomsTable(props: RoomsTableProps) {
   const { lastFetchRequested } = props;
 
   const { loading, error, data, refetch } = useQuery(GetUpcomingRooms, {
-    pollInterval: 30000,
+    pollInterval: POLL_INTERVAL,
   });
 
   const [shouldShowToday, setShouldShowToday] = useState(false);

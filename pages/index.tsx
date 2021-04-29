@@ -13,6 +13,8 @@ import { CreateEventModal } from "../features/dashboard/CreateEventModal";
 import SearchIcon from "@material-ui/icons/Search";
 
 import { UpcomingRoom } from "../@types/upcoming";
+import { useQuery } from "@apollo/client";
+import { GetBannedUsers } from "../graphql/queries/ban";
 
 export default function Home() {
   const [editingRoom, setEditingRoom] = useState<UpcomingRoom>(null);
