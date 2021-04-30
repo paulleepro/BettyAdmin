@@ -67,7 +67,7 @@ export default function LoginPage() {
           required
           {...register("password", { required: true })}
         />
-        <Button type="submit" fullWidth>
+        <Button type="submit" variant="contained" color="primary" fullWidth>
           Login
         </Button>
       </form>

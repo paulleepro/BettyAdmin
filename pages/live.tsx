@@ -15,9 +15,6 @@ export default function Home() {
     <MainLayout>
       <TitleBar>
         <Title>Live Rooms</Title>
-        <Button color="primary">
-          <AddIcon />
-        </Button>
       </TitleBar>
       <SearchBar>
         <Input
