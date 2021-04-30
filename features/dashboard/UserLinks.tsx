@@ -4,6 +4,7 @@ import { Box } from "@material-ui/core";
 const StyledLink = styled.a`
   color: #0b7ce5;
   text-decoration: none;
+  white-space: nowrap;
 
   &:hover {
     text-decoration: underline;
@@ -12,7 +13,7 @@ const StyledLink = styled.a`
 
 export function UserLinks(props) {
   return (
-    <Box display="flex">
+    <Box display="flex" flexWrap="wrap">
       {props.users.map(
         (u, i, a) =>
           u && (

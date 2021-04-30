@@ -20,9 +20,13 @@ import { CreateEventModal } from "../features/dashboard/CreateEventModal";
 
 import { UpcomingRoom } from "../@types/upcoming";
 import { useUpcomingRooms } from "../hooks/upcoming";
+import { useDebounce } from "react-use";
 
 export default function Home() {
   const [editingRoom, setEditingRoom] = useState<UpcomingRoom>(null);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const [isCreating, setIsCreating] = useState(false);
   const [filters, setFilters] = useState<UpcomingRoomFilters>({});
   const { data, refetch } = useUpcomingRooms();
@@ -32,9 +36,11 @@ export default function Home() {
     [data]
   );
 
+  useDebounce(() => setDebouncedSearch(search), 250, [search]);
+
   useEffect(() => {
-    console.log(filters);
-  }, [filters]);
+    console.log(debouncedSearch);
+  }, [debouncedSearch]);
 
   return (
     <MainLayout>
@@ -50,6 +56,7 @@ export default function Home() {
           <Input
             className="search-input"
             icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
+            onChange={(e) => setSearch(e.target.value?.toLowerCase())}
             margin="0 0.5rem 0 0"
             placeholder="Search"
           />
@@ -58,7 +65,9 @@ export default function Home() {
       </SearchBar>
       <UpcomingRoomsTable
         refetch={refetch}
-        upcomingRooms={upcomingRooms.filter(filterRoom(filters))}
+        upcomingRooms={upcomingRooms.filter(
+          filterRoom(filters, debouncedSearch)
+        )}
         onClick={setEditingRoom}
       />
       <CreateEventModal
@@ -75,9 +84,14 @@ export default function Home() {
 }
 
 function filterRoom(
-  filters: UpcomingRoomFilters
+  filters: UpcomingRoomFilters,
+  search?: string
 ): (room: UpcomingRoom) => boolean {
   return (room) => {
+    if (search && !JSON.stringify(room).toLowerCase().includes(search)) {
+      return false;
+    }
+
     let shouldAllow = true;
     if (filters.shows) {
       if (!filters.shows.includes(room.subtitle)) {
