@@ -32,3 +32,22 @@ export const SearchUsers = gql`
     }
   }
 `;
+
+export const GetMe = gql`
+  query GetMe {
+    me {
+      id
+      username
+      firstName
+      lastName
+      bio
+      photoUrl
+      verified
+      admin
+      twitterUsername
+      isFollowing
+      isBanned
+      gemCount
+    }
+  }
+`;
