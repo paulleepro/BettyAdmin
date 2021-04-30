@@ -1,4 +1,4 @@
-import { createElement, FC, useCallback } from "react";
+import { createElement, FC, useCallback, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { usePortal } from "../../hooks/usePortal";
@@ -17,6 +17,7 @@ export type ModalProps = {
 export const Modal: FC<ModalProps> = (props) => {
   const { isOpen, onClose, children } = props;
   const target = usePortal("portal__modal");
+  const memoizedChildren = useMemo(() => children, [isOpen, children]);
   const Wrapper = useCallback(
     ({ children }) =>
       createElement(props.component || "div", props.componentProps, children),
@@ -50,7 +51,7 @@ export const Modal: FC<ModalProps> = (props) => {
                 animate={{ opacity: 1, translateY: 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
               >
-                {children}
+                {memoizedChildren}
               </ModalContentWrapper>
             )}
           </AnimatePresence>

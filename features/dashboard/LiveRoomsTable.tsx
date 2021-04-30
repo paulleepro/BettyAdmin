@@ -5,7 +5,6 @@ import { TableWrapper } from "./TableWrapper";
 
 import { POLL_INTERVAL } from "../../constants/query";
 import { GetRooms } from "../../graphql/queries/room";
-import { getRelativeDay } from "./utils/getRelativeDay";
 import { UserLinks } from "./UserLinks";
 
 export function LiveRoomsTable() {

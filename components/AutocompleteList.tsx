@@ -1,5 +1,6 @@
 import { Box, IconButton, Link } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
+import { isEqual } from "lodash";
 
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
@@ -56,14 +57,19 @@ export function AutocompleteList(props) {
     if (!values.length) {
       setValues([null]);
     } else {
-      props.onChange(values.filter(Boolean).map(props.getOptionValue), values);
+      const vals = values.filter(Boolean).map(props.getOptionValue);
+
+      if (!isEqual(vals.sort(), defaultValue.slice().sort())) {
+        props.onChange(
+          values.filter(Boolean).map(props.getOptionValue),
+          values
+        );
+      }
     }
   }, [values]);
 
   useEffect(() => {
-    if (defaultValue?.length) {
-      setValues(defaultValue);
-    }
+    setValues(defaultValue);
   }, [defaultValue]);
 
   return (

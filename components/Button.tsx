@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, forwardRef } from "react";
 import { ButtonProps } from "@material-ui/core";
 import MUIButton from "@material-ui/core/Button";
 import styled from "styled-components";
@@ -119,10 +119,10 @@ const StyledButton = styled(MUIButton)`
   }
 `;
 
-export const Button: FC<ButtonProps> = (props) => {
+export const Button: FC<ButtonProps> = forwardRef((props, ref) => {
   return (
-    <StyledButton className="btn-blue" variant="contained" {...props}>
+    <StyledButton className="btn-blue" variant="contained" {...props} ref={ref}>
       {props.children}
     </StyledButton>
   );
-};
+});

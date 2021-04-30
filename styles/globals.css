@@ -61,3 +61,7 @@ p,
 span {
   font-size: 0.9375rem;
 }
+
+.MuiPopover-paper {
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.2);
+}

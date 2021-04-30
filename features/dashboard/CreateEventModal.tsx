@@ -13,8 +13,6 @@ import { KeyboardDatePicker } from "../../components/KeyboardDatePicker";
 import { KeyboardTimePicker } from "../../components/KeyboardTimePicker";
 import { Select } from "../../components/Select";
 import { TextareaAutosize } from "../../components/TextareaAutosize";
-import { UserOption } from "./UserOption";
-import { UserOptionPreview } from "./UserOptionPreview";
 import {
   Modal,
   ModalBody,
@@ -39,6 +37,7 @@ import {
   renderHostInput,
   searchHosts,
 } from "./utils/hostsAutocomplete";
+import { getOffsetMs } from "./utils/date";
 
 const EventID = styled(Box)`
   align-self: flex-start;
@@ -56,7 +55,7 @@ type CreateEventModalProps = ModalProps & {
   existing?: UpcomingRoom;
 };
 
-export function CreateEventModal(props: CreateEventModalProps) {
+export const CreateEventModal = (props: CreateEventModalProps) => {
   const { isOpen, existing } = props;
   const { handleSubmit, register, reset, setValue, trigger, watch } = useForm({
     defaultValues: {
@@ -79,17 +78,9 @@ export function CreateEventModal(props: CreateEventModalProps) {
   const onSubmit = (data) => {
     const startDate = new Date(data.startDate);
     const startTime = new Date(data.startTime);
-    startDate.setHours(startTime.getHours());
-    startDate.setMinutes(startTime.getMinutes());
-    startDate.setSeconds(0);
-    startDate.setMilliseconds(0);
+    startDate.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
 
-    // offsetMs is the number of milliseconds the local machine
-    // is ahead of data.timezone by
-    const offsetMs =
-      -getTimezoneOffset(data.timezone) -
-      startDate.getTimezoneOffset() * 60 * 1000;
-
+    const offsetMs = getOffsetMs(data.timezone);
     const startedAt = new Date(startDate.getTime() + offsetMs).toISOString();
     const payload: RoomPayload = {
       title: data.title,
@@ -262,7 +253,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
       />
     </Modal>
   );
-}
+};
 
 function validate(values) {
   if (!values.title || !values.description || !values.startDate) return false;

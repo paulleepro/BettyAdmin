@@ -8,19 +8,20 @@ import { UpcomingRoomsTableContainer } from "./UpcomingRoomsTableContainer";
 import { UpcomingRoomsTableWrapper } from "./UpcomingRoomsTableWrapper";
 import { UserLinks } from "../UserLinks";
 
-import { LA_TZ } from "../constants/timezones";
-import { getRelativeDay } from "../utils/getRelativeDay";
 import { deleteUpcomingRoom } from "../../../lib/api";
+import { getRelativeDay } from "../utils/getRelativeDay";
+import { LA_TZ } from "../constants/timezones";
 
 import { UpcomingRoom } from "../../../@types/upcoming";
+import { User } from "../../../@types/user";
 
-type RoomsTableProps = {
+type UpcomingRoomsTableProps = {
   upcomingRooms: UpcomingRoom[];
   onClick: (room: UpcomingRoom) => void;
   refetch: () => void;
 };
 
-export function UpcomingRoomsTable(props: RoomsTableProps) {
+export function UpcomingRoomsTable(props: UpcomingRoomsTableProps) {
   const { upcomingRooms, refetch } = props;
 
   const [shouldShowSkipToToday, setshouldShowSkipToToday] = useState(false);
@@ -46,7 +47,7 @@ export function UpcomingRoomsTable(props: RoomsTableProps) {
   const handleDeleteRoom = async (id) => {
     await deleteUpcomingRoom(id);
     setTimeout(() => {
-      props.refetch();
+      refetch();
     }, 250);
   };
 
