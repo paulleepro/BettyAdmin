@@ -1,8 +1,6 @@
 import { MainLayout } from "../layouts/MainLayout";
 
 import { Input } from "../components/Input";
-import AddIcon from "../components/icons/Add";
-import { Button } from "../components/Button";
 
 import { SearchBar } from "../features/dashboard/SearchBar";
 import { Title } from "../features/dashboard/Title";

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 
 import { TableContainer } from "./TableContainer";
@@ -10,23 +10,36 @@ import { GetBannedUsers } from "../../graphql/queries/ban";
 import { Button } from "../../components/Button";
 import { unbanUser } from "../../lib/api";
 
-export function BannedUsersTable() {
+type BannedUsersTableProps = {
+  lastFetchRequested?: number;
+};
+
+export function BannedUsersTable(props: BannedUsersTableProps) {
+  const { lastFetchRequested } = props;
   const [banning, setBanning] = useState({});
-  const { data } = useQuery(GetBannedUsers, { pollInterval: POLL_INTERVAL });
-  const handleUnban = useCallback(
-    (user) => {
-      setBanning({ [user.id]: true });
-      unbanUser([user.id])
-        .then((r) => {
-          if (r.ok) {
-            // Update banned users list
-          }
-        })
-        .catch(console.error)
-        .finally(() => setBanning({ [user.id]: false }));
-    },
-    [banning, setBanning]
-  );
+  const { data, refetch } = useQuery(GetBannedUsers, {
+    pollInterval: POLL_INTERVAL,
+  });
+  const handleUnban = (user) => {
+    setBanning({ [user.id]: true });
+    unbanUser([user.id])
+      .then((r) => {
+        if (r.ok) {
+          // Update banned users list
+        }
+      })
+      .catch(console.error)
+      .finally(() => {
+        setBanning({ [user.id]: false });
+        setTimeout(() => {
+          refetch();
+        }, 250);
+      });
+  };
+
+  useEffect(() => {
+    refetch();
+  }, [lastFetchRequested]);
 
   if (!data) {
     return null;
