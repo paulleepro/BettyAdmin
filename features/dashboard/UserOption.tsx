@@ -5,6 +5,7 @@ const UserOptionContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  white-space: nowrap;
 
   > * {
     margin-right: 0.5rem;

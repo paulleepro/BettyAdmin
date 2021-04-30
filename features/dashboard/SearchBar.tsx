@@ -6,11 +6,7 @@ export const SearchBar = styled.div`
   align-items: center;
   justify-content: flex-start;
 
-  ${InputContainer} {
-    flex: 0;
-  }
-
-  ${StyledInput} {
+  .search-input {
     width: 23rem;
     background: #f5f5f5;
 

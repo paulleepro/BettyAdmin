@@ -1,43 +1,34 @@
-import { useQuery } from "@apollo/client";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { useEffect, useRef, useState } from "react";
 import { IconButton } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 import { Button } from "../../../components/Button";
-import { RoomsTableContainer } from "./RoomsTableContainer";
-import { RoomsTableWrapper } from "./RoomsTableWrapper";
+import { UpcomingRoomsTableContainer } from "./UpcomingRoomsTableContainer";
+import { UpcomingRoomsTableWrapper } from "./UpcomingRoomsTableWrapper";
 import { UserLinks } from "../UserLinks";
 
-import { POLL_INTERVAL } from "../../../constants/query";
 import { LA_TZ } from "../constants/timezones";
 import { getRelativeDay } from "../utils/getRelativeDay";
 import { deleteUpcomingRoom } from "../../../lib/api";
-import { GetUpcomingRooms } from "../../../graphql/queries";
 
 import { UpcomingRoom } from "../../../@types/upcoming";
 
-type RoomFilters = {};
-
 type RoomsTableProps = {
-  filters?: RoomFilters;
+  upcomingRooms: UpcomingRoom[];
   onClick: (room: UpcomingRoom) => void;
-  lastFetchRequested?: Number;
+  refetch: () => void;
 };
 
-export function RoomsTable(props: RoomsTableProps) {
-  const { lastFetchRequested } = props;
+export function UpcomingRoomsTable(props: RoomsTableProps) {
+  const { upcomingRooms, refetch } = props;
 
-  const { loading, error, data, refetch } = useQuery(GetUpcomingRooms, {
-    pollInterval: POLL_INTERVAL,
-  });
+  const [shouldShowSkipToToday, setshouldShowSkipToToday] = useState(false);
 
-  const [shouldShowToday, setShouldShowToday] = useState(false);
-
+  const mountedRef = useRef<boolean>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const firstTodayRef = useRef<HTMLTableRowElement>(null);
   const observer = useRef<IntersectionObserver>(null);
-
   const laNow = utcToZonedTime(new Date(), LA_TZ);
 
   const skipToToday = () => {
@@ -55,7 +46,7 @@ export function RoomsTable(props: RoomsTableProps) {
   const handleDeleteRoom = async (id) => {
     await deleteUpcomingRoom(id);
     setTimeout(() => {
-      refetch();
+      props.refetch();
     }, 250);
   };
 
@@ -66,18 +57,22 @@ export function RoomsTable(props: RoomsTableProps) {
       // skip to today button
       observer.current = new window.IntersectionObserver(
         ([entry]) => {
-          setShouldShowToday(!entry.isIntersecting);
+          if (!mountedRef.current) {
+            mountedRef.current = true;
+            return;
+          }
+          setshouldShowSkipToToday(!entry.isIntersecting);
         },
-        { root: tableBodyRef.current, rootMargin: "0px", threshold: 0.1 }
+        { root: null, rootMargin: "0px", threshold: 0.1 }
       );
     } else {
       // clear all entries
       observer.current.disconnect();
     }
 
-    if (data) {
+    if (upcomingRooms) {
       firstTodayRef.current = null;
-      Array.from(tableBodyRef.current.children || []).forEach(
+      Array.from(tableBodyRef.current?.children || []).forEach(
         (tableRow: HTMLTableRowElement) => {
           if (!firstTodayRef.current && tableRow.className.includes("today")) {
             observer.current.observe(tableRow);
@@ -87,27 +82,23 @@ export function RoomsTable(props: RoomsTableProps) {
       );
     }
 
-    return () => observer.current?.disconnect();
-  }, [data]);
+    return () => {
+      observer.current?.disconnect();
+    };
+  }, [upcomingRooms]);
 
-  useEffect(() => {
-    refetch();
-  }, [lastFetchRequested]);
-
-  if (loading || error) {
+  if (!upcomingRooms) {
     return null;
   }
 
-  const { upcomingRooms } = data;
-
   return (
-    <RoomsTableContainer>
-      {shouldShowToday && (
+    <UpcomingRoomsTableContainer>
+      {shouldShowSkipToToday && (
         <Button className="skipBtn" onClick={() => skipToToday()}>
           Skip to Today
         </Button>
       )}
-      <RoomsTableWrapper>
+      <UpcomingRoomsTableWrapper>
         <table>
           <thead>
             <tr>
@@ -160,7 +151,7 @@ export function RoomsTable(props: RoomsTableProps) {
             })}
           </tbody>
         </table>
-      </RoomsTableWrapper>
-    </RoomsTableContainer>
+      </UpcomingRoomsTableWrapper>
+    </UpcomingRoomsTableContainer>
   );
 }

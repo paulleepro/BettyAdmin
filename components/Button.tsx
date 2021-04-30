@@ -49,8 +49,18 @@ const StyledButton = styled(MUIButton)`
     }
   }
 
+  &.MuiButton-contained {
+    color: #858585;
+
+    &:hover,
+    &:active {
+      color: #858585;
+    }
+  }
+
   &.MuiButton-containedPrimary {
     background: linear-gradient(266.53deg, #ff0000 0%, #ff5c00 100%);
+    color: #fff;
 
     &:hover {
       background: linear-gradient(
@@ -59,6 +69,7 @@ const StyledButton = styled(MUIButton)`
           rgba(0, 0, 0, 0.15)
         ),
         linear-gradient(266.53deg, #ff0000 0%, #ff5c00 100%);
+      color: #fff;
     }
 
     &:active {
@@ -68,18 +79,22 @@ const StyledButton = styled(MUIButton)`
           rgba(0, 0, 0, 0.25)
         ),
         linear-gradient(266.53deg, #ff0000 0%, #ff5c00 100%);
+      color: #fff;
     }
   }
 
   &.MuiButton-containedSecondary {
     background: #0b7ce5;
+    color: #fff;
 
     &:hover {
       background: #096ac3;
+      color: #fff;
     }
 
     &:active {
       background: #085dac;
+      color: #fff;
     }
   }
 

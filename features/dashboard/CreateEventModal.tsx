@@ -29,14 +29,16 @@ import {
   createUpcomingRoom,
   updateUpcomingRoom,
 } from "../../lib/api";
-import { client } from "../../graphql/client";
-import { SearchUsers } from "../../graphql/queries";
 
 import { LA_TZ, timezones } from "./constants/timezones";
 import { nextHour } from "./constants/time";
 
 import { UpcomingRoom } from "../../@types/upcoming";
-import { User } from "../../@types/user";
+import {
+  handleRenderOption,
+  renderHostInput,
+  searchHosts,
+} from "./utils/hostsAutocomplete";
 
 const EventID = styled(Box)`
   align-self: flex-start;
@@ -73,20 +75,7 @@ export function CreateEventModal(props: CreateEventModalProps) {
   const [isEditingRecurrence, setIsEditingRecurrence] = useState(false);
   const values = watch();
   const isDisabled = !validate(values);
-  const handleLoadOptions = async (q: string): Promise<User[]> =>
-    client
-      .query({ query: SearchUsers, variables: { query: q } })
-      .then((d) => {
-        return d.data.users.results;
-      })
-      .catch((e) => {
-        return [];
-      });
 
-  const handleRenderOption = (option: User) => <UserOption user={option} />;
-  const renderHostInput = (user: User) => {
-    return <UserOptionPreview user={user} />;
-  };
   const onSubmit = (data) => {
     const startDate = new Date(data.startDate);
     const startTime = new Date(data.startTime);
@@ -180,19 +169,21 @@ export function CreateEventModal(props: CreateEventModalProps) {
             margin="0 0 1.5rem 0"
             {...register("subtitle")}
           />
-          <AutocompleteList
-            label="Hosts"
-            addLabel="Add another host"
-            renderInput={renderHostInput}
-            renderOption={handleRenderOption}
-            loadOptions={handleLoadOptions}
-            defaultValue={values.speakers}
-            getOptionValue={(option) => option?.id || null}
-            onChange={(hosts, rawHosts) => {
-              setValue("speakerIds", hosts);
-              setValue("speakers", rawHosts);
-            }}
-          />
+          <Box marginBottom="1.5rem">
+            <AutocompleteList
+              label="Hosts"
+              addLabel="Add another host"
+              renderInput={renderHostInput}
+              renderOption={handleRenderOption}
+              loadOptions={searchHosts}
+              defaultValue={values.speakers}
+              getOptionValue={(option) => option?.id || null}
+              onChange={(hosts, rawHosts) => {
+                setValue("speakerIds", hosts);
+                setValue("speakers", rawHosts);
+              }}
+            />
+          </Box>
           <InputContainer marginBottom="1.5rem">
             <InputLabel htmlFor="description">Description</InputLabel>
             <TextareaAutosize

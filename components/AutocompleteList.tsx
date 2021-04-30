@@ -7,8 +7,6 @@ import { Autocomplete } from "./Autocomplete";
 import { InputLabel } from "./Input";
 
 const StyledAutocompleteList = styled(Box)`
-  margin-bottom: 1.5rem;
-
   > * {
     margin-bottom: 0.5rem;
   }
@@ -18,7 +16,7 @@ const StyledAutocompleteList = styled(Box)`
 let searchTO = null;
 export function AutocompleteList(props) {
   const { defaultValue } = props;
-  const [values, setValues] = useState([null]);
+  const [values, setValues] = useState([]);
   const [autocompleteOptions, setAutocompleteOptions] = useState([]);
   const mountRef = useRef(null);
   const handleSearch = async (q: string) => {
@@ -55,7 +53,11 @@ export function AutocompleteList(props) {
   }, []);
 
   useEffect(() => {
-    props.onChange(values.map(props.getOptionValue), values);
+    if (!values.length) {
+      setValues([null]);
+    } else {
+      props.onChange(values.filter(Boolean).map(props.getOptionValue), values);
+    }
   }, [values]);
 
   useEffect(() => {
@@ -86,7 +88,7 @@ export function AutocompleteList(props) {
               onClick={() =>
                 values.length > 1
                   ? setValues(values.filter((v, vi) => vi !== i))
-                  : setValues([null])
+                  : setValues([])
               }
             >
               <CloseIcon fontSize="small" />

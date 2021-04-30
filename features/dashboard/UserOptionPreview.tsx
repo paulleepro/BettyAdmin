@@ -6,6 +6,7 @@ const UserOptionPreviewContainer = styled.div`
   align-items: center;
   cursor: pointer;
 
+  background: #fff;
   border-radius: 0.25rem;
   border: 1px solid #e5e5e5;
   box-sizing: border-box;
@@ -14,6 +15,7 @@ const UserOptionPreviewContainer = styled.div`
 
   > * {
     margin-right: 0.5rem;
+    white-space: nowrap;
   }
 `;
 

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { TableContainer } from "../TableContainer";
 
-export const RoomsTableContainer = styled(TableContainer)`
+export const UpcomingRoomsTableContainer = styled(TableContainer)`
   .skipBtn {
     background: #fff;
     box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
@@ -13,5 +13,10 @@ export const RoomsTableContainer = styled(TableContainer)`
     right: 1.5rem;
     top: 2.5rem;
     z-index: 10;
+
+    &:hover,
+    &:active {
+      color: #1f1f1f;
+    }
   }
 `;

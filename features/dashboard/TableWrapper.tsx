@@ -63,16 +63,6 @@ export const TableWrapper = styled.div`
 
       &:hover {
         background: #f5f5f5;
-
-        td {
-          &.actions {
-            text-align: center;
-
-            * {
-              opacity: 1;
-            }
-          }
-        }
       }
     }
   }
