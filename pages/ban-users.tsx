@@ -12,10 +12,15 @@ import { Title } from "../features/dashboard/Title";
 import { TitleBar } from "../features/dashboard/TitleBar";
 import { BannedUsersTable } from "../features/dashboard/BannedUsersTable";
 import { BanUserModal } from "../features/dashboard/BanUserModal";
+import { useDebounce } from "react-use";
 
 export default function Home() {
   const [isBanning, setIsBanning] = useState(false);
   const [lastFetchRequested, setLastFetchRequested] = useState(Date.now());
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useDebounce(() => setDebouncedSearch(search), 250, [search]);
 
   return (
     <MainLayout>
@@ -30,9 +35,13 @@ export default function Home() {
         <Input
           placeholder="Search banned users"
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
+          onChange={(e) => setSearch(e.target.value?.toLowerCase())}
         />
       </SearchBar>
-      <BannedUsersTable lastFetchRequested={lastFetchRequested} />
+      <BannedUsersTable
+        lastFetchRequested={lastFetchRequested}
+        search={debouncedSearch}
+      />
       <BanUserModal
         isOpen={isBanning}
         onClose={() => {

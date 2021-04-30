@@ -1,27 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '../../components/Modal';
-import { Button } from '../../components/Button';
-import { SearchUsers } from '../../graphql/queries';
-import { User } from '../../@types/user';
-import { client } from '../../graphql/client';
-import { UserOption } from './UserOption';
-import { AutocompleteList } from '../../components/AutocompleteList';
-import { UserOptionPreview } from './UserOptionPreview';
+} from "../../components/Modal";
+import { Button } from "../../components/Button";
+import { SearchUsers } from "../../graphql/queries";
+import { User } from "../../@types/user";
+import { client } from "../../graphql/client";
+import { UserOption } from "./UserOption";
+import { AutocompleteList } from "../../components/AutocompleteList";
+import { UserOptionPreview } from "./UserOptionPreview";
 
-import { banUser } from '../../lib/api';
+import { banUser } from "../../lib/api";
 
 export function BanUserModal(props) {
   const { isOpen } = props;
   const [submitting, setSubmitting] = useState(false);
   const { handleSubmit, reset, setValue, trigger, watch } = useForm({
     defaultValues: {
+      users: [],
       userIds: [],
     },
   });
@@ -79,9 +80,11 @@ export function BanUserModal(props) {
             renderInput={renderHostInput}
             renderOption={handleRenderOption}
             loadOptions={handleLoadOptions}
-            getOptionValue={(option) => option?.id || null}
-            onChange={(users) => {
-              setValue('userIds', users);
+            getOptionValue={(option) => option.id}
+            defaultValue={values.users}
+            onChange={(userIds, users) => {
+              setValue("userIds", userIds);
+              setValue("users", users);
             }}
           />
         </ModalBody>

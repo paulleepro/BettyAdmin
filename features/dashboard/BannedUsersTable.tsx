@@ -11,6 +11,7 @@ import { Button } from "../../components/Button";
 import { unbanUser } from "../../lib/api";
 
 type BannedUsersTableProps = {
+  search?: string;
   lastFetchRequested?: number;
 };
 
@@ -58,23 +59,33 @@ export function BannedUsersTable(props: BannedUsersTableProps) {
             </tr>
           </thead>
           <tbody>
-            {bannedUsers.map((user) => (
-              <tr key={user.id}>
-                <td>
-                  <UserOption user={user} />
-                </td>
-                <td style={{ textAlign: "right" }}>
-                  <Button
-                    color="primary"
-                    variant="text"
-                    disabled={banning[user.id]}
-                    onClick={() => handleUnban(user)}
-                  >
-                    {banning[user.id] ? "Unbanning" : "Unban"}
-                  </Button>
-                </td>
-              </tr>
-            ))}
+            {bannedUsers
+              .filter((user) => {
+                if (props.search == "") {
+                  return true;
+                }
+
+                return JSON.stringify(user)
+                  .toLowerCase()
+                  .includes(props.search);
+              })
+              .map((user) => (
+                <tr key={user.id}>
+                  <td>
+                    <UserOption user={user} />
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <Button
+                      color="primary"
+                      variant="text"
+                      disabled={banning[user.id]}
+                      onClick={() => handleUnban(user)}
+                    >
+                      {banning[user.id] ? "Unbanning" : "Unban"}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </TableWrapper>
