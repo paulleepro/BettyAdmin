@@ -149,6 +149,7 @@ export const CreateEventModal = (props: CreateEventModalProps) => {
             id="title"
             label="Room Title"
             margin="0 0 1.5rem 0"
+            required
             {...register("title")}
           />
           {existing && (
@@ -158,12 +159,14 @@ export const CreateEventModal = (props: CreateEventModalProps) => {
             id="subtitle"
             label="Show Title"
             margin="0 0 1.5rem 0"
+            required
             {...register("subtitle")}
           />
           <Box marginBottom="1.5rem">
             <AutocompleteList
               label="Hosts"
               addLabel="Add another host"
+              required
               renderInput={renderHostInput}
               renderOption={handleRenderOption}
               loadOptions={searchHosts}
@@ -176,7 +179,7 @@ export const CreateEventModal = (props: CreateEventModalProps) => {
             />
           </Box>
           <InputContainer marginBottom="1.5rem">
-            <InputLabel htmlFor="description">Description</InputLabel>
+            <InputLabel htmlFor="description" required>Description</InputLabel>
             <TextareaAutosize
               id="description"
               rowsMin={5}
@@ -184,7 +187,7 @@ export const CreateEventModal = (props: CreateEventModalProps) => {
             />
           </InputContainer>
           <InputContainer maxWidth="11.5rem" marginBottom="1.5rem">
-            <InputLabel>Date</InputLabel>
+            <InputLabel required>Date</InputLabel>
             <KeyboardDatePicker
               format="MM/dd/yyyy"
               minDate={Date.now()}
@@ -193,7 +196,7 @@ export const CreateEventModal = (props: CreateEventModalProps) => {
             />
           </InputContainer>
           <InputContainer marginBottom="1.5rem">
-            <InputLabel>Time</InputLabel>
+            <InputLabel required>Time</InputLabel>
             <Box display="flex" alignItems="center" justifyContent="flex-start">
               <Box maxWidth="8rem">
                 <KeyboardTimePicker

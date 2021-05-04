@@ -1,5 +1,11 @@
 import { Box } from "@material-ui/core";
-import { forwardRef, InputHTMLAttributes, ReactNode, useState } from "react";
+import {
+  FC,
+  forwardRef,
+  InputHTMLAttributes,
+  ReactNode,
+  useState,
+} from "react";
 import styled from "styled-components";
 
 export const InputContainer = styled(Box)`
@@ -33,7 +39,11 @@ export const StyledInput = styled.input`
   }
 `;
 
-export const InputLabel = styled.label`
+const RequiredSpan = styled.span`
+  color: #ff0000;
+`;
+
+const StyledInputLabel = styled.label`
   align-items: center;
   display: flex;
   font-size: 0.9375rem;
@@ -42,15 +52,20 @@ export const InputLabel = styled.label`
   margin-bottom: 0.5rem;
 `;
 
+export const InputLabel = ({ children, ...props }) => {
+  return (
+    <StyledInputLabel {...props}>
+      {children}
+      {props.required && <RequiredSpan>*</RequiredSpan>}
+    </StyledInputLabel>
+  );
+};
+
 const StyledCharsLeftLabel = styled.span`
   color: #bfbfbf;
   font-weight: 400;
   font-size: 0.8125rem;
   margin-left: 0.5rem;
-`;
-
-const RequiredSpan = styled.span`
-  color: #ff0000;
 `;
 
 type InputProps = {
@@ -70,7 +85,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <InputContainer margin={props.margin || "0 0 1rem 0"}>
         {label && (
-          <InputLabel htmlFor={props.id}>
+          <InputLabel htmlFor={props.id} required={props.required}>
             {label}
             {props.maxLength && (
               <CharsLeftLabel
@@ -78,7 +93,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 maxLength={props.maxLength}
               />
             )}
-            {props.required && <RequiredSpan>*</RequiredSpan>}
           </InputLabel>
         )}
         <StyledInput

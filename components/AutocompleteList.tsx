@@ -16,7 +16,7 @@ const StyledAutocompleteList = styled(Box)`
 // DebounceTimer
 let searchTO = null;
 export function AutocompleteList(props) {
-  const { defaultValue } = props;
+  const { defaultValue, required } = props;
   const [values, setValues] = useState([]);
   const [autocompleteOptions, setAutocompleteOptions] = useState([]);
   const mountRef = useRef(null);
@@ -74,7 +74,7 @@ export function AutocompleteList(props) {
 
   return (
     <StyledAutocompleteList>
-      <InputLabel>{props.label}</InputLabel>
+      <InputLabel required={props.required}>{props.label}</InputLabel>
       {values.map((value, i) => (
         <Box key={i} display="flex" alignItems="center" width="100%">
           <Autocomplete
