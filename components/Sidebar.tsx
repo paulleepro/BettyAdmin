@@ -1,7 +1,7 @@
-import Link, { LinkProps } from 'next/link';
-import styled from 'styled-components';
-import { ReactNode } from 'react';
-import { useRouter } from 'next/router';
+import Link, { LinkProps } from "next/link";
+import styled from "styled-components";
+import { ReactNode } from "react";
+import { useRouter } from "next/router";
 
 import {
   BanIcon,
@@ -9,7 +9,8 @@ import {
   FlagIcon,
   ListViewIcon,
   LiveIcon,
-} from '../components/icons';
+  UserIcon,
+} from "../components/icons";
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -48,15 +49,15 @@ const StyledSidebarItem = styled.a<{ active: boolean }>`
   position: relative;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     width: 0.25rem;
     height: 100%;
-    background-color: ${(props) => (props.active ? `#1ed760` : 'transparent')};
+    background-color: ${(props) => (props.active ? `#1ed760` : "transparent")};
   }
 
-  color: ${(props) => (props.active ? `#000` : '#868686')};
+  color: ${(props) => (props.active ? `#000` : "#868686")};
 
   &:hover {
     color: #000;
@@ -70,7 +71,7 @@ const StyledSidebarItem = styled.a<{ active: boolean }>`
 
     path {
       fill: #000;
-      fill-opacity: ${(props) => (props.active ? '1' : '0.5')};
+      fill-opacity: ${(props) => (props.active ? "1" : "0.5")};
     }
   }
 `;
@@ -110,6 +111,10 @@ export const Sidebar = () => (
     <SidebarItem href="/user-reports">
       <FlagIcon />
       User Reports
+    </SidebarItem>
+    <SidebarItem href="/user-information">
+      <UserIcon />
+      User Information
     </SidebarItem>
     <SidebarItem href="/waitlist">
       <ListViewIcon />
