@@ -52,22 +52,24 @@ export default function LoginPage() {
 
   return (
     <CenteredLayout maxWidth="32rem">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form data-testid="loginform" onSubmit={handleSubmit(onSubmit)}>
         <Input
           id="username"
+          data-testid="username"
           label="Username"
           placeholder="Username"
           required
           {...register("username", { required: true })}
         />
         <Input
+          data-testid="password"
           label="Password"
           placeholder="Password"
           type="password"
           required
           {...register("password", { required: true })}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button type="submit" data-testid="submit" variant="contained" color="primary" fullWidth>
           Login
         </Button>
       </form>
