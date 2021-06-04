@@ -132,7 +132,7 @@ const StyledButton = styled(MUIButton)`
 
 export const Button: FC<ButtonProps> = forwardRef((props, ref) => {
   return (
-    <StyledButton className="btn-blue" variant="contained" {...props} ref={ref}>
+    <StyledButton className="btn-blue" data-testid="button" variant="contained" {...props} ref={ref}>
       {props.children}
     </StyledButton>
   );

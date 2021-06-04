@@ -10,7 +10,7 @@ const Wrapper = ({ children }) => (
 	<Provider store={store}>{children}</Provider>
 );
 
-describe('Header test suit', () => {
+describe('Header component test suit', () => {
 
 	it('Should take a snapshot', () => {
 		const { asFragment } = render(<Header />, { wrapper: Wrapper });
@@ -19,6 +19,12 @@ describe('Header test suit', () => {
 
 	it('Should render with out error',  () => {
 		render(<Header />, { wrapper: Wrapper });
+	});
+
+	it('Logo renders correctly',  () => {
+		const { getByTestId } = render(<Header />, { wrapper: Wrapper });
+		const logo = getByTestId('logo');
+		expect(logo).toBeInTheDocument();
 	});
 
 });

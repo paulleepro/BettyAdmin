@@ -5,7 +5,7 @@ import { Input } from '../../components/Input';
 
 afterEach(cleanup);
 
-describe('Input test suit', () => {
+describe('Input component test suit', () => {
 
 	it('Should take a snapshot', () => {
 		const { asFragment } = render(<Input />);

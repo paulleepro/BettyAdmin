@@ -11,7 +11,7 @@ const Wrapper = ({ children }) => (
 	<Provider store={store}>{children}</Provider>
 );
 
-describe('Login test suit', () => {
+describe('Login component test suit', () => {
 
 	it('Should take a snapshot', () => {
 		const { asFragment } = render(<LoginPage />, { wrapper: Wrapper });
