@@ -84,8 +84,8 @@ function SidebarItem(props: SidebarItemProps) {
   const router = useRouter();
 
   return (
-    <Link href={props.href}>
-      <StyledSidebarItem active={props.href === router.pathname}>
+    <Link href={props.href} >
+      <StyledSidebarItem active={props.href === router?.pathname} data-testid={props.children[1]}>
         {props.children}
       </StyledSidebarItem>
     </Link>
