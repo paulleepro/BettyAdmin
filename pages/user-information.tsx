@@ -19,7 +19,7 @@ export default function UserInformation() {
   return (
     <MainLayout>
       <TitleBar>
-        <Title>User Information</Title>
+        <Title data-testid="title">User Information</Title>
       </TitleBar>
       <SearchBar>
         <Input

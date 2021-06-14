@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
+import fetch from 'cross-fetch';
 import { setContext } from "@apollo/client/link/context";
 
 const getUserToken = () => {
@@ -20,6 +21,7 @@ const authLink = setContext((_, { headers }) => {
 
 const httpLink = new HttpLink({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_URL,
+  fetch
 });
 
 export const client = new ApolloClient({
