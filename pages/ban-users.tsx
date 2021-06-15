@@ -33,6 +33,7 @@ export default function Home() {
       </TitleBar>
       <SearchBar>
         <Input
+          data-testid="search"
           placeholder="Search banned users"
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
           onChange={(e) => setSearch(e.target.value?.toLowerCase())}

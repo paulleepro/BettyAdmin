@@ -23,6 +23,7 @@ export default function UserInformation() {
       </TitleBar>
       <SearchBar>
         <Input
+          data-testid="search"
           placeholder="Search"
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
           onChange={(e) => setSearch(e.target.value?.toLowerCase())}

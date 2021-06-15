@@ -1,6 +1,7 @@
 import React from "react";
 import { cleanup, render } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
+import user from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import store from "../store";
 import Home from "../pages/ban-users";
@@ -53,5 +54,31 @@ describe("Home component test suit", () => {
     const button = getByTestId("button");
     expect(button).toBeInTheDocument();
     expect(button).toHaveTextContent("Ban User");
+  });
+
+  it("search field rendered", () => {
+    const { getByTestId } = render(
+      <MockedProvider>
+        <Provider store={store}>
+          <Home />
+        </Provider>
+      </MockedProvider>
+    );
+    const search = getByTestId("search");
+    expect(search).toBeInTheDocument();
+    expect(search).toHaveTextContent("");
+  });
+
+  it("search value should be consistent", async () => {
+    const { getByTestId } = render(
+      <MockedProvider>
+        <Provider store={store}>
+          <Home />
+        </Provider>
+      </MockedProvider>
+    );
+    const search = getByTestId("search");
+    await user.type(search, "Roman");
+    expect(search.value).toBe("Roman");
   });
 });
