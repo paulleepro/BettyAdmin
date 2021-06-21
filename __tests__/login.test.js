@@ -1,10 +1,14 @@
 import React from "react";
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, render, fireEvent } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
 import { Provider } from "react-redux";
 import user from "@testing-library/user-event";
 import LoginPage from "../pages/login";
+import { postLogin } from "../lib/api";
 import store from "../store";
-
+beforeAll(() => {
+  process.env.NEXT_PUBLIC_API_URL = 'https://admin.betty.wtf';
+});
 afterEach(cleanup);
 
 const Wrapper = ({ children }) => <Provider store={store}>{children}</Provider>;
@@ -72,6 +76,52 @@ describe("Login component test suit", () => {
     expect(getByTestId("loginform")).toHaveFormValues({
       username: "jane.doe",
       password: "3jfncncjcnjdnc",
+    });
+  });
+
+  it("Submit form with wrong credentials", async () => {
+    const { getByTestId } = render(<LoginPage />, { wrapper: Wrapper });
+    
+    const userNameField = getByTestId("username");
+    await user.type(userNameField, "msnfo");
+    
+    const passwordField = getByTestId("password");
+    await user.type(passwordField, "password");
+    await act(async () => {
+      await fireEvent.submit(getByTestId("loginform"));
+    });
+  });
+
+  it("Submit form with correct credentials", async () => {
+    const { getByTestId } = render(<LoginPage />, { wrapper: Wrapper });
+
+    const userNameField = getByTestId("username");
+    await user.type(userNameField, "super_admin");
+
+    const passwordField = getByTestId("password");
+    await user.type(passwordField, "password");
+    await act(async () => {
+      await fireEvent.submit(getByTestId("loginform"));
+    });
+  });
+
+  it("Login Api with wrong credentials", async () => {
+    const data = { username: 'msnfo', password: 'password' };
+    await act(async () => {
+      return await postLogin(data).then(data => {
+        expect(data.status).toBe(401);
+        expect(data.statusText).toBe('Unauthorized');
+      });
+    });
+  });
+
+  it("Login Api with Correct credentials", async () => {
+    const data = { username: 'super_admin', password: 'password' }
+    await act(async () => {
+      return await postLogin(data).then(data => {
+        expect(data.status).toBe(200);
+        expect(data.statusText).toBe('OK');
+      });
     });
   });
 });

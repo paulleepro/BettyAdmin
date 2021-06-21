@@ -36,3 +36,5 @@ yarn-error.log*
 #snapshots
 /__tests__/__snapshots__
 /__tests__/components/__snapshots__
+/__tests__/features/__snapshots__
+
