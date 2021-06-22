@@ -28,7 +28,7 @@ export const Header = () => {
   return (
     <HeaderContainer>
       <Link href="/">
-        <a className="logo">
+        <a className="logo" data-testid="logo">
           <img src="/logo.svg" />
         </a>
       </Link>

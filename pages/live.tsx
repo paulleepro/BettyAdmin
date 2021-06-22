@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <MainLayout>
       <TitleBar>
-        <Title>Live Rooms</Title>
+        <Title data-testid="title">Live Rooms</Title>
       </TitleBar>
       <SearchBar>
         <Input

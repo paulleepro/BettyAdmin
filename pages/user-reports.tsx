@@ -13,13 +13,14 @@ export default function Home() {
   return (
     <MainLayout>
       <TitleBar>
-        <Title>User Reports</Title>
+        <Title data-testid="title">User Reports</Title>
         <Button color="primary">
           <AddIcon />
         </Button>
       </TitleBar>
       <SearchBar>
         <Input
+          data-testid="search"
           placeholder="Search"
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
         />

@@ -25,14 +25,15 @@ export default function Home() {
   return (
     <MainLayout>
       <TitleBar>
-        <Title>Ban Users</Title>
-        <Button color="primary" onClick={() => setIsBanning(true)}>
+        <Title  data-testid="title">Ban Users</Title>
+        <Button data-testid="button" color="primary" onClick={() => setIsBanning(true)}>
           <AddIcon />
           Ban User
         </Button>
       </TitleBar>
       <SearchBar>
         <Input
+          data-testid="search"
           placeholder="Search banned users"
           icon={<SearchIcon style={{ color: "#9a9a9a" }} />}
           onChange={(e) => setSearch(e.target.value?.toLowerCase())}

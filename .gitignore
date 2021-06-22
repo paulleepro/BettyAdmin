@@ -32,3 +32,9 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+#snapshots
+/__tests__/__snapshots__
+/__tests__/components/__snapshots__
+/__tests__/features/__snapshots__
+
